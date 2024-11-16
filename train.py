@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
-import tqdm
+from tqdm import tqdm
 
 class AverageMeter(object):
     """
@@ -93,6 +93,8 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         loss.backward()
         optimizer.step()
 
+        # print(loss.cpu())
+        # print(loss.item())
         running_loss.update(loss.item(), X.shape[0]/train_loader.batch_size)
 
     return running_loss.avg

@@ -25,20 +25,21 @@ class XtoCModel(nn.Module):
                 else:
                     self.linears.append(nn.Linear(prev_width, width))
                     prev_width = width
+        self.linears = nn.ModuleList(self.linears)
         self.final_activation = final_activation
 
 
-        def forward(self, x):
-            for layer_num, layer in enumerate(self.linears):
-                x = layer(x)
-                if layer_num == len(self.linears)-1:
-                    if isinstance(self.final_activation, nn.Module):
-                        x = self.final_activation(x)
-                    elif self.final_activation:
-                        x = self.activation_func(x)
-                else:
+    def forward(self, x):
+        for layer_num, layer in enumerate(self.linears):
+            x = layer(x)
+            if layer_num == len(self.linears)-1:
+                if isinstance(self.final_activation, nn.Module):
+                    x = self.final_activation(x)
+                elif self.final_activation:
                     x = self.activation_func(x)
-            return x
+            else:
+                x = self.activation_func(x)
+        return x
         
 class CtoYModel(nn.Module):
     def __init__(self, concepts, outputs, depth=3, width=16, 
@@ -63,18 +64,19 @@ class CtoYModel(nn.Module):
                 else:
                     self.linears.append(nn.Linear(prev_width, width))
                     prev_width = width
+        self.linears = nn.ModuleList(self.linears)
 
         self.final_activation = final_activation
 
-        def forward(self, x):
-            for layer_num, layer in enumerate(self.linears):
-                x = layer(x)
-                if layer_num == len(self.linears)-1:
-                    if self.final_activation == None:
-                        x = self.final_activation(x)
-                    else:
-                        x = self.activation_func(x)
-            return x
+    def forward(self, x):
+        for layer_num, layer in enumerate(self.linears):
+            x = layer(x)
+            if layer_num == len(self.linears)-1:
+                if self.final_activation == None:
+                    x = self.final_activation(x)
+                else:
+                    x = self.activation_func(x)
+        return x
         
 class FullModel(torch.nn.Module):
     def __init__(self, x_to_c_model, c_to_y_model):

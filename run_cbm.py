@@ -9,9 +9,10 @@ import git
 
 repo = git.Repo(search_parent_directories=True)
 sha = repo.head.object.hexsha
-print(str(sha))
+sha = repo.git.rev_parse(sha, short=8)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(device)
 
 data_fn = "data/college_acceptance_100001_gaussian.csv"
 X_headers = ['age', 'sex', 'white', 'asian', 'black', 'hispanic', 'otherRace', 'STEM', 'percentile', 'collegeLevel']
@@ -22,9 +23,9 @@ train_loader, test_loader, Cy_max = load_data(X_headers, C_headers, Y_headers, d
 
 latents = 0
 
-x_to_c_model = XtoCModel(len(X_headers), len(C_headers), latents, final_activation=nn.Sigmoid)
-c_to_y_model = CtoYModel(len(C_headers)+latents, len(Y_headers))
-model = FullModel(x_to_c_model, c_to_y_model)
+x_to_c_model = XtoCModel(len(X_headers), len(C_headers), latents, final_activation=nn.Sigmoid).to(device)
+c_to_y_model = CtoYModel(len(C_headers)+latents, len(Y_headers)).to(device)
+model = FullModel(x_to_c_model, c_to_y_model).to(device)
 
 label_loss = nn.BCELoss()
 learning_rate = 0.001
@@ -38,3 +39,4 @@ losses = train(model, train_loader, len(C_headers), optimizer, y_criterion=label
                concept_weight=concept_loss_weight, device=device)
 
 torch.save(model.state_dict(), 'checkpoints/joint_cbm_'+str(sha))
+print(f'model saved to: checkpoints/joint_cbm_{str(sha)}')
