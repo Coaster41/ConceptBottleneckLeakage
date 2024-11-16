@@ -59,6 +59,7 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
                     n_concepts, device='cpu', cbm_version="joint"):
     assert cbm_version == 'joint' # other version not yet implemented
     running_loss = AverageMeter()
+    running_accuracy = AverageMeter()
 
     for batch, data in enumerate(train_loader):
         X, Cy = data
@@ -96,8 +97,9 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         # print(loss.cpu())
         # print(loss.item())
         running_loss.update(loss.item(), X.shape[0]/train_loader.batch_size)
+        running_accuracy.update(torch.mean(y == torch.round(y_out)).item(), X.shape[0]/train_loader.batch_size)
 
-    return running_loss.avg
+    return running_loss.avg, running_accuracy.avg
 
 
 
@@ -113,14 +115,16 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
     
     # Train Model
     losses = []
+    accuracies = []
     model.train()
     for epoch in tqdm(range(epochs)):
-        loss = train_one_epoch(model, train_loader, optimizer, y_criterion, 
+        loss, accuracy = train_one_epoch(model, train_loader, optimizer, y_criterion, 
                                concept_criterion, latent_criterion, y_weight, 
                                concept_weight, latent_weight, n_concepts, device)
         losses.append(loss)
+        accuracies.append(accuracy)
     model.eval()
-    return losses
+    return losses, accuracies
 
 
 def eval(model, test_loader, n_concepts, y_criterion=None, 
@@ -132,6 +136,7 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         concept_criterion = nn.MSELoss()
     
     running_loss = AverageMeter()
+    running_accuracy = AverageMeter()
     model.eval()
 
     for batch, data in enumerate(test_loader):
@@ -166,5 +171,6 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         loss = sum(losses)
 
         running_loss.update(loss.item(), X.shape[0]/test_loader.batch_size)
+        running_accuracy.update(torch.mean(y == torch.round(y_out)).item(), X.shape[0]/test_loader.batch_size)
 
-    return running_loss.avg
+    return running_loss.avg, running_accuracy.avg
