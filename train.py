@@ -121,4 +121,50 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
         losses.append(loss)
     model.eval()
     return losses
+
+
+def eval(model, test_loader, n_concepts, y_criterion=None, 
+          concept_criterion=None, latent_criterion=None, y_weight=1, 
+          concept_weight=0.1, latent_weight=0.5, device='cpu'):
+    if not y_criterion:
+        y_criterion = nn.BCELoss()
+    if not concept_criterion:
+        concept_criterion = nn.MSELoss()
     
+    running_loss = AverageMeter()
+    model.eval()
+
+    for batch, data in enumerate(test_loader):
+        X, Cy = data
+        X = X.to(device)
+        Cy = Cy.to(device)
+        C = Cy[:,:n_concepts]
+        y = Cy[:, n_concepts:]
+
+
+        c_out, y_out = model(X)
+        losses = []
+
+        # Label Loss
+        losses.append(y_weight * y_criterion(y_out, y))
+        
+        # Concept Loss
+        if isinstance(concept_criterion, list):
+            for i in range(len(concept_criterion)):
+                if isinstance(concept_weight, list):
+                    c_weight = concept_weight[i]
+                else:
+                    c_weight = concept_weight
+                losses.append(c_weight * concept_criterion[i](c_out[:,i], C[:,i]))
+        else:
+            losses.append(concept_weight * concept_criterion(c_out[:,:n_concepts], C))
+            
+        # Latent Loss
+        if latent_criterion:
+            losses.append(latent_weight * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]))
+            
+        loss = sum(losses)
+        
+        running_loss.update(loss.item(), X.shape[0]/test_loader.batch_size)
+
+    return running_loss.avg

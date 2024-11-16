@@ -1,8 +1,10 @@
 import torch.nn as nn
 import torch
 import time
+import os
+import matplotlib.pyplot as plt
 
-from train import load_data, train
+from train import load_data, train, eval
 from models import *
 
 import git
@@ -38,5 +40,19 @@ losses = train(model, train_loader, len(C_headers), optimizer, y_criterion=label
                concept_criterion=concept_criterion, y_weight=label_loss_weight, 
                concept_weight=concept_loss_weight, device=device)
 
-torch.save(model.state_dict(), 'checkpoints/joint_cbm_'+str(sha))
+if not os.path.exists("checkpoints/joint_cbm_"+str(sha)):
+    os.makedirs("checkpoints/joint_cbm_"+str(sha))
+torch.save(model.state_dict(), 'checkpoints/joint_cbm_'+str(sha)+'/model.pkl')
 print(f'model saved to: checkpoints/joint_cbm_{str(sha)}')
+
+test_loss = eval(model, test_loader, len(C_headers), y_criterion=label_loss,
+               concept_criterion=concept_criterion, y_weight=label_loss_weight, 
+               concept_weight=concept_loss_weight, device=device)
+
+plt.plot(range(len(losses)), losses)
+plt.axhline(y = 0.5, color = 'r', linestyle = 'dashed') 
+plt.legend(['Training Loss', "Test Loss"]) 
+plt.xlabel('Epoch') 
+plt.ylabel('Loss')
+plt.savefig('checkpoints/joint_cbm_'+str(sha)+"/losses.png") 
+plt.show()
