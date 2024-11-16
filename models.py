@@ -43,7 +43,7 @@ class XtoCModel(nn.Module):
         
 class CtoYModel(nn.Module):
     def __init__(self, concepts, outputs, depth=3, width=16, 
-                 use_relu=True, use_sigmoid=False, activation=None, final_activation=nn.Sigmoid()):
+                 use_relu=True, use_sigmoid=False, activation=None, final_activation=None):
         super(CtoYModel, self).__init__()
         if use_relu:
             self.activation_func = nn.ReLU()
@@ -72,7 +72,7 @@ class CtoYModel(nn.Module):
         for layer_num, layer in enumerate(self.linears):
             x = layer(x)
             if layer_num == len(self.linears)-1:
-                if self.final_activation == None:
+                if self.final_activation != None:
                     x = self.final_activation(x)
                 else:
                     x = self.activation_func(x)

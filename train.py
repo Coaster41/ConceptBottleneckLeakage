@@ -164,7 +164,7 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
             losses.append(latent_weight * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]))
             
         loss = sum(losses)
-        
+
         running_loss.update(loss.item(), X.shape[0]/test_loader.batch_size)
 
     return running_loss.avg
