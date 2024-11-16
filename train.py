@@ -97,7 +97,7 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         # print(loss.cpu())
         # print(loss.item())
         running_loss.update(loss.item(), X.shape[0]/train_loader.batch_size)
-        running_accuracy.update(torch.mean(y == torch.round(y_out)).item(), X.shape[0]/train_loader.batch_size)
+        running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), X.shape[0]/train_loader.batch_size)
 
     return running_loss.avg, running_accuracy.avg
 
@@ -171,6 +171,6 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         loss = sum(losses)
 
         running_loss.update(loss.item(), X.shape[0]/test_loader.batch_size)
-        running_accuracy.update(torch.mean(y == torch.round(y_out)).item(), X.shape[0]/test_loader.batch_size)
+        running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), X.shape[0]/test_loader.batch_size)
 
     return running_loss.avg, running_accuracy.avg

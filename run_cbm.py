@@ -57,7 +57,7 @@ fig, ax1 = plt.subplots()
 color = 'tab:red'
 ax1.set_xlabel('Epoch')
 ax1.set_ylabel('Loss', color=color)
-ax1.plot(range(len(losses)), losses)
+ax1.plot(range(len(losses)), losses, color=color)
 ax1.axhline(y = test_loss, color = color, linestyle = 'dashed') 
 ax1.tick_params(axis='y', labelcolor=color)
 ax1.legend(["Training Loss", "Test Loss"])
@@ -66,7 +66,7 @@ ax2 = ax1.twinx()  # instantiate a second Axes that shares the same x-axis
 
 color = 'tab:blue'
 ax2.set_ylabel('Accuracy', color=color)  # we already handled the x-label with ax1
-ax2.plot(range(len(accuracies)), accuracies)
+ax2.plot(range(len(accuracies)), accuracies, color=color)
 ax2.axhline(y = test_accuracy, color = color, linestyle = 'dashed') 
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend(["Training Accuracy", "Test Accuracy"])
