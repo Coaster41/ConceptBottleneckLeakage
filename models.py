@@ -72,7 +72,7 @@ class CtoYModel(nn.Module):
         for layer_num, layer in enumerate(self.linears):
             x = layer(x)
             if layer_num == len(self.linears)-1:
-                if self.final_activation != None:
+                if self.final_activation:
                     x = self.final_activation(x)
                 else:
                     x = self.activation_func(x)

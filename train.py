@@ -94,8 +94,6 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         loss.backward()
         optimizer.step()
 
-        # print(loss.cpu())
-        # print(loss.item())
         running_loss.update(loss.item(), X.shape[0]/train_loader.batch_size)
         running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), X.shape[0]/train_loader.batch_size)
 
