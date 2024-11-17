@@ -1,0 +1,9 @@
+{
+  "expr_name": "no_latent_missing_concepts",
+  "data_loc": "data/college_acceptance_100001_gaussian.csv",
+  "x_headers": ["age", "sex", "white", "asian", "black", "hispanic", "otherRace", "STEM", "percentile", "collegeLevel"],
+  "c_headers": ["SATWriting", "APTests", "APScores", "extracurriculars"],
+  "y_headers": ["accepted"],
+  "n_latent": 0,
+  "batch_size": 4048
+}

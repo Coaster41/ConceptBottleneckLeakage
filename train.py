@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
 
 class AverageMeter(object):
     """
@@ -38,7 +39,7 @@ def load_data(X_headers, C_headers, Y_headers, file_name, Cy_norm=True, batch_si
     if Cy_norm:
         Cy_max = np.max(Cy, axis=0)
         Cy = Cy / Cy_max
-    X_train, X_test, Cy_train, Cy_test = train_test_split(X, Cy, train_size=.7)
+    X_train, X_test, Cy_train, Cy_test = train_test_split(X, Cy, train_size=.7, random_state=42)
 
     train_X = torch.Tensor(X_train)
     train_Cy = torch.Tensor(Cy_train)
@@ -135,6 +136,10 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
     
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
+    f1_score_meter = AverageMeter()
+    precision = AverageMeter()
+    recall = AverageMeter()
+    rocauc = AverageMeter()
     model.eval()
 
     for batch, data in enumerate(test_loader):
@@ -168,7 +173,19 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
             
         loss = sum(losses)
 
-        running_loss.update(loss.item(), X.shape[0]/test_loader.batch_size)
-        running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), X.shape[0]/test_loader.batch_size)
+        y_np = data[1][:, n_concepts:]
+        y_pred = y_out.cpu().detach().numpy()
+        y_pred_round = np.round(y_pred)
+        batch_size_prop = X.shape[0]/test_loader.batch_size
+        running_loss.update(loss.item(), batch_size_prop)
+        running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), batch_size_prop)
+        f1_score_meter.update(f1_score(y_np, y_pred_round), batch_size_prop)
+        precision.update(precision_score(y_np, y_pred_round), batch_size_prop)
+        recall.update(recall_score(y_np, y_pred_round), batch_size_prop)
+        rocauc.update(roc_auc_score(y_np, y_pred), batch_size_prop)
 
+
+    print("Test Results:")
+    print("Loss: {:.4f}, Accuracy: {:.4f}".format(running_loss.avg, running_accuracy.avg))
+    print("F1 Score: {:.4f}, Precision: {:.4f}, Recall: {:.4f}, ROCAUC: {:.4f}".format(f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg))
     return running_loss.avg, running_accuracy.avg

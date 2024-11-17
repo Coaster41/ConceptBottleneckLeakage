@@ -1,6 +1,5 @@
 import torch.nn as nn
 import torch
-import time
 import os
 import matplotlib.pyplot as plt
 
@@ -17,11 +16,11 @@ sha = repo.head.object.hexsha
 sha = repo.git.rev_parse(sha, short=8)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(device)
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-c', "--config", required=True)    
+parser.add_argument('-l', "--load_model")
 
 args = parser.parse_args()
 
@@ -97,48 +96,51 @@ c_to_y_model = CtoYModel(len(C_headers)+latents, len(Y_headers), depth=cy_depth,
                          use_relu=cy_use_relu, use_sigmoid=cy_use_sigmoid, final_activation=cy_final_activation).to(device)
 model = FullModel(x_to_c_model, c_to_y_model).to(device)
 
-optimizer = optimizer_base(model.parameters(), lr=learning_rate)
+if args.load_model:
+    model.load_state_dict(torch.load(args.load_model, weights_only=True))
+else:
+    # Train Model
+    optimizer = optimizer_base(model.parameters(), lr=learning_rate)
 
-# Train Model
+    losses, accuracies = train(model, train_loader, len(C_headers), optimizer, y_criterion=label_criterion,
+                concept_criterion=concept_criterion, y_weight=label_weight, 
+                concept_weight=concept_weight, device=device)
 
-losses, accuracies = train(model, train_loader, len(C_headers), optimizer, y_criterion=label_criterion,
-               concept_criterion=concept_criterion, y_weight=label_weight, 
-               concept_weight=concept_weight, device=device)
-
-save_path = checkpoint_path+expr_name+"_"+str(sha)
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
-torch.save(model.state_dict(), save_path+'/model.pkl')
-json_obj = json.dumps(config, indent=4)
-with open(save_path+'/config.json', 'w') as outfile:
-	outfile.write(json_obj)
-print(f'model saved to: {save_path}')
+    save_path = checkpoint_path+expr_name+"_"+str(sha)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    torch.save(model.state_dict(), save_path+'/model.pkl')
+    json_obj = json.dumps(config, indent=4)
+    with open(save_path+'/config.json', 'w') as outfile:
+        outfile.write(json_obj)
+    print(f'model saved to: {save_path}')
 
 test_loss, test_accuracy = eval(model, test_loader, len(C_headers), y_criterion=label_criterion,
                concept_criterion=concept_criterion, y_weight=label_weight, 
                concept_weight=concept_weight, device=device)
 
-fig, ax1 = plt.subplots()
-color = 'tab:red'
-ax1.set_xlabel('Epoch')
-ax1.set_ylabel('Loss', color=color)
-ax1_train_loss = ax1.plot(range(len(losses)), losses, color=color, label="Training Loss")
-ax1_test_loss = ax1.axhline(y = test_loss, color = color, linestyle = 'dashed', label="Test Loss") 
-ax1.tick_params(axis='y', labelcolor=color)
+if not args.load_model:
+    fig, ax1 = plt.subplots()
+    color = 'tab:red'
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('Loss', color=color)
+    ax1_train_loss = ax1.plot(range(len(losses)), losses, color=color, label="Training Loss")
+    ax1_test_loss = ax1.axhline(y = test_loss, color = color, linestyle = 'dashed', label="Test Loss") 
+    ax1.tick_params(axis='y', labelcolor=color)
 
-ax2 = ax1.twinx()  # instantiate a second Axes that shares the same x-axis
+    ax2 = ax1.twinx()  # instantiate a second Axes that shares the same x-axis
 
-color = 'tab:blue'
-ax2.set_ylabel('Accuracy', color=color)  # we already handled the x-label with ax1
-ax2_train_accuracy = ax2.plot(range(len(accuracies)), accuracies, color=color, label="Train Accuracy")
-ax2_test_accuracy = ax2.axhline(y = test_accuracy, color = color, linestyle = 'dashed', label="Test Accuracy") 
-ax2.tick_params(axis='y', labelcolor=color)
+    color = 'tab:blue'
+    ax2.set_ylabel('Accuracy', color=color)  # we already handled the x-label with ax1
+    ax2_train_accuracy = ax2.plot(range(len(accuracies)), accuracies, color=color, label="Train Accuracy")
+    ax2_test_accuracy = ax2.axhline(y = test_accuracy, color = color, linestyle = 'dashed', label="Test Accuracy") 
+    ax2.tick_params(axis='y', labelcolor=color)
 
-plots = ax1_train_loss+[ax1_test_loss]+ax2_train_accuracy+[ax2_test_accuracy]
-labs = [l.get_label() for l in plots]
-ax1.legend(plots, labs, loc='right')
+    plots = ax1_train_loss+[ax1_test_loss]+ax2_train_accuracy+[ax2_test_accuracy]
+    labs = [l.get_label() for l in plots]
+    ax1.legend(plots, labs, loc='right')
 
-fig.tight_layout()  # otherwise the right y-label is slightly clipped
-plt.savefig(save_path+"/losses.png") 
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.savefig(save_path+"/losses.png") 
 
 print('Test Loss:', test_loss)
