@@ -77,7 +77,7 @@ cy_depth = c_to_y_params.get('depth', 3)
 cy_width = c_to_y_params.get('width', 16)
 cy_use_sigmoid = c_to_y_params.get('use_sigmoid', False)
 cy_use_relu = c_to_y_params.get('use_relu', True if not cy_use_sigmoid else False)
-cy_final_activation_str = c_to_y_params.get('final_activation', None)
+cy_final_activation_str = c_to_y_params.get('final_activation', "sigmoid")
 if isinstance(cy_final_activation_str, str):
     cy_final_activation = activation_dict.get(cy_final_activation_str, None)
 else:
