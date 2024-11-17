@@ -29,13 +29,14 @@ with open(args.config, 'r') as file:
     config = json.load(file)
 
 # Load from config
+expr_name = config.get("expr_name")
 data_fn = config.get("data_loc")
 X_headers = config.get("x_headers")
 C_headers = config.get("c_headers")
 Y_headers = config.get("y_headers")
 batch_size = config.get("batch_size", 1024)
 Cy_norm = config.get("normalize", True)
-latents = config.get("n_latents", 0)
+latents = config.get("n_latent", 0)
 label_loss_str = config.get("y_criterion", "bce")
 loss_dict = {"bce": nn.BCELoss(), "bce_logits": nn.BCEWithLogitsLoss(), "mse": nn.MSELoss(),
              "leakage": leakage_loss, "cross_entropy": nn.CrossEntropyLoss()}
@@ -104,13 +105,14 @@ losses, accuracies = train(model, train_loader, len(C_headers), optimizer, y_cri
                concept_criterion=concept_criterion, y_weight=label_weight, 
                concept_weight=concept_weight, device=device)
 
-if not os.path.exists(checkpoint_path+"joint_cbm_"+str(sha)):
-    os.makedirs(checkpoint_path+"joint_cbm_"+str(sha))
-torch.save(model.state_dict(), checkpoint_path+'joint_cbm_'+str(sha)+'/model.pkl')
+save_path = checkpoint_path+expr_name+"_"+str(sha)
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
+torch.save(model.state_dict(), save_path+'/model.pkl')
 json_obj = json.dumps(config, indent=4)
-with open(checkpoint_path+'joint_cbm_'+str(sha)+'/config.json', 'w') as outfile:
+with open(save_path+'/config.json', 'w') as outfile:
 	outfile.write(json_obj)
-print(f'model saved to: {checkpoint_path}joint_cbm_{str(sha)}')
+print(f'model saved to: {save_path}')
 
 test_loss, test_accuracy = eval(model, test_loader, len(C_headers), y_criterion=label_criterion,
                concept_criterion=concept_criterion, y_weight=label_weight, 
@@ -137,6 +139,6 @@ labs = [l.get_label() for l in plots]
 ax1.legend(plots, labs, loc='right')
 
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
-plt.savefig(checkpoint_path+'joint_cbm_'+str(sha)+"/losses.png") 
+plt.savefig(save_path+"/losses.png") 
 
 print('Test Loss:', test_loss)
