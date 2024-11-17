@@ -107,6 +107,8 @@ losses, accuracies = train(model, train_loader, len(C_headers), optimizer, y_cri
 if not os.path.exists(checkpoint_path+"joint_cbm_"+str(sha)):
     os.makedirs(checkpoint_path+"joint_cbm_"+str(sha))
 torch.save(model.state_dict(), checkpoint_path+'joint_cbm_'+str(sha)+'/model.pkl')
+with open(checkpoint_path+'joint_cbm_'+str(sha)+'/config.yaml', 'w') as outfile:
+	yaml.dump(config, outfile, default_flow_style=False)
 print(f'model saved to: {checkpoint_path}joint_cbm_{str(sha)}')
 
 test_loss, test_accuracy = eval(model, test_loader, len(C_headers), y_criterion=label_criterion,
