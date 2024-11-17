@@ -52,7 +52,7 @@ def load_data(X_headers, C_headers, Y_headers, file_name, Cy_norm=True, batch_si
 
     if Cy_norm:
         return train_loader, test_loader, Cy_max
-    return train_loader, test_loader
+    return train_loader, test_loader, 1
 
 
 def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criterion,
@@ -136,6 +136,8 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
     
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
+    concept_loss = AverageMeter()
+    label_loss = AverageMeter()
     f1_score_meter = AverageMeter()
     precision = AverageMeter()
     recall = AverageMeter()
@@ -179,13 +181,17 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         batch_size_prop = X.shape[0]/test_loader.batch_size
         running_loss.update(loss.item(), batch_size_prop)
         running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), batch_size_prop)
-        f1_score_meter.update(f1_score(y_np, y_pred_round), batch_size_prop)
-        precision.update(precision_score(y_np, y_pred_round), batch_size_prop)
-        recall.update(recall_score(y_np, y_pred_round), batch_size_prop)
-        rocauc.update(roc_auc_score(y_np, y_pred), batch_size_prop)
+        label_loss.update(losses[0].item(), batch_size_prop)
+        concept_loss.update(sum(losses[1:n_concepts+1]).item()/n_concepts, batch_size_prop)
+        if np.array_equal(np.unique(y_np), [0,1]):
+            f1_score_meter.update(f1_score(y_np, y_pred_round), batch_size_prop)
+            precision.update(precision_score(y_np, y_pred_round), batch_size_prop)
+            recall.update(recall_score(y_np, y_pred_round), batch_size_prop)
+            rocauc.update(roc_auc_score(y_np, y_pred), batch_size_prop)
 
 
     print("Test Results:")
     print("Loss: {:.4f}, Accuracy: {:.4f}".format(running_loss.avg, running_accuracy.avg))
+    print("Label Loss: {:.4f}, Concept Loss: {:.4f}".format(label_loss.avg, concept_loss.avg))
     print("F1 Score: {:.4f}, Precision: {:.4f}, Recall: {:.4f}, ROCAUC: {:.4f}".format(f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg))
     return running_loss.avg, running_accuracy.avg
