@@ -108,7 +108,7 @@ if not os.path.exists(checkpoint_path+"joint_cbm_"+str(sha)):
     os.makedirs(checkpoint_path+"joint_cbm_"+str(sha))
 torch.save(model.state_dict(), checkpoint_path+'joint_cbm_'+str(sha)+'/model.pkl')
 json_obj = json.dumps(config, indent=4)
-with open(checkpoint_path+'joint_cbm_'+str(sha)+'/config.yaml', 'w') as outfile:
+with open(checkpoint_path+'joint_cbm_'+str(sha)+'/config.json', 'w') as outfile:
 	outfile.write(json_obj)
 print(f'model saved to: {checkpoint_path}joint_cbm_{str(sha)}')
 
