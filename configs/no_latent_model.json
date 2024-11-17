@@ -2,5 +2,5 @@
   "data_loc": "data/college_acceptance_100001_gaussian.csv",
   "x_headers": ["age", "sex", "white", "asian", "black", "hispanic", "otherRace", "STEM", "percentile", "collegeLevel"],
   "c_headers": ["gpa", "SAT", "SATWriting", "APTests", "APScores", "essays", "extracurriculars", "collegeLevel"],
-  "y_headers": ["accepted"],
+  "y_headers": ["accepted"]
 }

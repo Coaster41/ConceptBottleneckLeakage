@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from train import load_data, train, eval
 from models import *
-import yaml
+import json
 import argparse
 from loss import leakage_loss
 
@@ -26,7 +26,7 @@ parser.add_argument('-c', "--config", required=True)
 args = parser.parse_args()
 
 with open(args.config, 'r') as file:
-    config = yaml.safe_load(file)
+    config = json.load(file)
 
 # Load from config
 data_fn = config.get("data_loc")
@@ -107,8 +107,9 @@ losses, accuracies = train(model, train_loader, len(C_headers), optimizer, y_cri
 if not os.path.exists(checkpoint_path+"joint_cbm_"+str(sha)):
     os.makedirs(checkpoint_path+"joint_cbm_"+str(sha))
 torch.save(model.state_dict(), checkpoint_path+'joint_cbm_'+str(sha)+'/model.pkl')
+json_obj = json.dumps(config, indent=4)
 with open(checkpoint_path+'joint_cbm_'+str(sha)+'/config.yaml', 'w') as outfile:
-	yaml.dump(config, outfile, default_flow_style=False)
+	outfile.write(json_obj)
 print(f'model saved to: {checkpoint_path}joint_cbm_{str(sha)}')
 
 test_loss, test_accuracy = eval(model, test_loader, len(C_headers), y_criterion=label_criterion,
