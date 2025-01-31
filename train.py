@@ -61,18 +61,26 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
     assert cbm_version == 'joint' # other version not yet implemented
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
+    concept_accuracy = AverageMeter()
+    
+    concept_loss = AverageMeter()
+    label_loss = AverageMeter()
+    latent_loss = AverageMeter()
 
     for batch, data in enumerate(train_loader):
-        X, Cy = data
-        X = X.to(device)
-        Cy = Cy.to(device)
-        C = Cy[:,:n_concepts]
-        y = Cy[:, n_concepts:]
+        X, C, y = data
+        X = X.float().to(device)
+        C = C.float().to(device)
+        y = y.squeeze().type(torch.LongTensor).to(device)
+        # Cy = Cy.to(device)
+        # C = Cy[:,:n_concepts]
+        # y = Cy[:, n_concepts:]
 
         optimizer.zero_grad()
         c_out, y_out = model(X)
         losses = []
 
+        print(torch.mean(c_out[:,:n_concepts], dim=0))
         # Label Loss
         losses.append(y_weight * y_criterion(y_out, y))
         
@@ -89,16 +97,26 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
             
         # Latent Loss
         if latent_criterion:
-            losses.append(latent_weight * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]))
+            l_loss = latent_weight * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:])
+            # print(l_loss)
+            losses.append(l_loss)
             
         loss = sum(losses)
         loss.backward()
         optimizer.step()
 
         running_loss.update(loss.item(), X.shape[0]/train_loader.batch_size)
-        running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), X.shape[0]/train_loader.batch_size)
+        running_accuracy.update(torch.mean((y == torch.argmax(y_out,1)).float()).item(), X.shape[0]/train_loader.batch_size)
+        concept_accuracy.update(torch.mean((C == torch.round(c_out[:,:n_concepts])).float()).item(), X.shape[0]/train_loader.batch_size)
 
-    return running_loss.avg, running_accuracy.avg
+        label_loss.update(losses[0].item(), X.shape[0])
+        concept_loss.update(losses[1].item(), X.shape[0])
+        if latent_criterion:
+            latent_loss.update(losses[2].item(), X.shape[0])
+    
+    print(f"Label Loss: {label_loss.avg:.4f} Concept Loss: {concept_loss.avg:.4f} Latent Loss: {latent_loss.avg:.4f}")
+
+    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg
 
 
 
@@ -115,15 +133,17 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
     # Train Model
     losses = []
     accuracies = []
+    concept_accuracies = []
     model.train()
     for epoch in tqdm(range(epochs)):
-        loss, accuracy = train_one_epoch(model, train_loader, optimizer, y_criterion, 
+        loss, accuracy, concept_accuracy = train_one_epoch(model, train_loader, optimizer, y_criterion, 
                                concept_criterion, latent_criterion, y_weight, 
                                concept_weight, latent_weight, n_concepts, device)
         losses.append(loss)
         accuracies.append(accuracy)
+        concept_accuracies.append(concept_accuracy)
     model.eval()
-    return losses, accuracies
+    return losses, accuracies, concept_accuracies
 
 
 def eval(model, test_loader, n_concepts, y_criterion=None, 
@@ -136,8 +156,10 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
     
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
+    concept_accuracy = AverageMeter()
     concept_loss = AverageMeter()
     label_loss = AverageMeter()
+    latent_loss = AverageMeter()
     f1_score_meter = AverageMeter()
     precision = AverageMeter()
     recall = AverageMeter()
@@ -145,11 +167,15 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
     model.eval()
 
     for batch, data in enumerate(test_loader):
-        X, Cy = data
-        X = X.to(device)
-        Cy = Cy.to(device)
-        C = Cy[:,:n_concepts]
-        y = Cy[:, n_concepts:]
+        X, C, y = data
+        X = X.float().to(device)
+        C = C.float().to(device)
+        y = y.squeeze().type(torch.LongTensor).to(device)
+        # X, Cy = data
+        # X = X.to(device)
+        # Cy = Cy.to(device)
+        # C = Cy[:,:n_concepts]
+        # y = Cy[:, n_concepts:]
 
 
         c_out, y_out = model(X)
@@ -180,9 +206,12 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         y_pred_round = np.round(y_pred)
         batch_size_prop = X.shape[0]/test_loader.batch_size
         running_loss.update(loss.item(), batch_size_prop)
-        running_accuracy.update(torch.mean((y == torch.round(y_out)).float()).item(), batch_size_prop)
+        running_accuracy.update(torch.mean((y == torch.argmax(y_out, dim=1)).float()).item(), batch_size_prop)
         label_loss.update(losses[0].item(), batch_size_prop)
-        concept_loss.update(sum(losses[1:n_concepts+1]).item()/n_concepts, batch_size_prop)
+        concept_loss.update(losses[1].item(), batch_size_prop)
+        if latent_criterion:
+            latent_loss.update(losses[2].item(), batch_size_prop)
+        concept_accuracy.update(torch.mean((C == torch.round(c_out[:,:n_concepts])).float()).item(), batch_size_prop)
         if np.array_equal(np.unique(y_np), [0,1]):
             f1_score_meter.update(f1_score(y_np, y_pred_round), batch_size_prop)
             precision.update(precision_score(y_np, y_pred_round), batch_size_prop)
@@ -192,6 +221,6 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
 
     print("Test Results:")
     print("Loss: {:.4f}, Accuracy: {:.4f}".format(running_loss.avg, running_accuracy.avg))
-    print("Label Loss: {:.4f}, Concept Loss: {:.4f}".format(label_loss.avg, concept_loss.avg))
+    print("Label Loss: {:.4f}, Concept Loss: {:.4f} Latent Loss: {:.4f}".format(label_loss.avg, concept_loss.avg, latent_loss.avg))
     print("F1 Score: {:.4f}, Precision: {:.4f}, Recall: {:.4f}, ROCAUC: {:.4f}".format(f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg))
-    return running_loss.avg, running_accuracy.avg
+    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg

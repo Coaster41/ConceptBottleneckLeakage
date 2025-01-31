@@ -27,14 +27,17 @@ class XtoCModel(nn.Module):
                     prev_width = width
         self.linears = nn.ModuleList(self.linears)
         self.final_activation = final_activation
-
+        self.concepts = concepts
+        self.latents = latents
 
     def forward(self, x):
         for layer_num, layer in enumerate(self.linears):
             x = layer(x)
             if layer_num == len(self.linears)-1:
                 if isinstance(self.final_activation, nn.Module):
-                    x = self.final_activation(x)
+                    x[:,:self.concepts] = self.final_activation(x[:,:self.concepts])
+                    if self.latents > 0:
+                        x[:,self.concepts:] = self.activation_func(x[:,self.concepts:])
                 elif self.final_activation:
                     x = self.activation_func(x)
             else:
