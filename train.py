@@ -56,8 +56,7 @@ def load_data(X_headers, C_headers, Y_headers, file_name, Cy_norm=True, batch_si
 
 
 def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criterion,
-                    latent_criterion, y_weight, concept_weight, latent_weight, 
-                    n_concepts, device='cpu', cbm_version="joint"):
+                    latent_criterion, n_concepts, loss_norm=None, device='cpu', cbm_version="joint"):
     assert cbm_version == 'joint' # other version not yet implemented
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
@@ -80,26 +79,36 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         c_out, y_out = model(X)
         losses = []
 
-        print(torch.mean(c_out[:,:n_concepts], dim=0))
+        # print(torch.mean(c_out[:,:n_concepts], dim=0))
         # Label Loss
-        losses.append(y_weight * y_criterion(y_out, y))
+        if loss_norm['method'] == "weighted_exp_sum":
+            losses.append(loss_norm['y_weight'] * (y_criterion(y_out, y) - loss_norm['y_utopia'])**loss_norm["exp"])
+        else:
+            losses.append(loss_norm['y_weight'] * y_criterion(y_out, y))
         
         # Concept Loss
         if isinstance(concept_criterion, list):
             for i in range(len(concept_criterion)):
-                if isinstance(concept_weight, list):
-                    c_weight = concept_weight[i]
+                if isinstance(loss_norm["c_weight"], list):
+                    c_weight = loss_norm["c_weight"][i]
                 else:
-                    c_weight = concept_weight
+                    c_weight = loss_norm["c_weight"]
+            if loss_norm['method'] == "weighted_exp_sum":
+                losses.append(c_weight * (concept_criterion[i](c_out[:,i], C[:,i]) - loss_norm['c_utopia'])**loss_norm["exp"])
+            else:
                 losses.append(c_weight * concept_criterion[i](c_out[:,i], C[:,i]))
-        else:
-            losses.append(concept_weight * concept_criterion(c_out[:,:n_concepts], C))
+        elif concept_criterion:
+            if loss_norm['method'] == "weighted_exp_sum":
+                losses.append(loss_norm["c_weight"] * (concept_criterion(c_out[:,:n_concepts], C) - loss_norm['c_utopia'])**loss_norm["exp"])
+            else:
+                losses.append(loss_norm["c_weight"] * concept_criterion(c_out[:,:n_concepts], C))
             
         # Latent Loss
         if latent_criterion:
-            l_loss = latent_weight * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:])
-            # print(l_loss)
-            losses.append(l_loss)
+            if loss_norm['method'] == "weighted_exp_sum":
+                losses.append(loss_norm['l_weight'] * (latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]) - loss_norm['l_utopia'])**loss_norm["exp"])
+            else:
+                losses.append(loss_norm['l_weight'] * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]))
             
         loss = sum(losses)
         loss.backward()
@@ -114,15 +123,15 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         if latent_criterion:
             latent_loss.update(losses[2].item(), X.shape[0])
     
-    print(f"Label Loss: {label_loss.avg:.4f} Concept Loss: {concept_loss.avg:.4f} Latent Loss: {latent_loss.avg:.4f}")
+    # print(f"Label Loss: {label_loss.avg:.4f} Concept Loss: {concept_loss.avg:.4f} Latent Loss: {latent_loss.avg:.4f}")
 
-    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg
+    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg, label_loss.avg, concept_loss.avg, latent_loss.avg
 
 
 
 def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion=None, 
-          concept_criterion=None, latent_criterion=None, y_weight=1, 
-          concept_weight=0.1, latent_weight=0.5, epochs=50, device='cpu'): 
+          concept_criterion=None, latent_criterion=None,
+          loss_norm=None, epochs=50, device='cpu'): 
     if not optimizer:
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     if not y_criterion:
@@ -135,10 +144,10 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
     accuracies = []
     concept_accuracies = []
     model.train()
-    for epoch in tqdm(range(epochs)):
-        loss, accuracy, concept_accuracy = train_one_epoch(model, train_loader, optimizer, y_criterion, 
-                               concept_criterion, latent_criterion, y_weight, 
-                               concept_weight, latent_weight, n_concepts, device)
+    for epoch in (pbar:=tqdm(range(epochs))):
+        loss, accuracy, concept_accuracy, label_loss, concept_loss, latent_loss = train_one_epoch(model, train_loader, optimizer, y_criterion, 
+                               concept_criterion, latent_criterion, n_concepts, loss_norm, device)
+        pbar.set_description(f"Total Loss: {loss:.4f} Label Loss: {label_loss:.4f} Label Accuracy: {accuracy:.4f} Concept Loss: {concept_loss:.4f} Concept Accuracy: {concept_accuracy:.4f} Latent Loss: {latent_loss:.4f}")
         losses.append(loss)
         accuracies.append(accuracy)
         concept_accuracies.append(concept_accuracy)
@@ -147,12 +156,13 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
 
 
 def eval(model, test_loader, n_concepts, y_criterion=None, 
-          concept_criterion=None, latent_criterion=None, y_weight=1, 
-          concept_weight=0.1, latent_weight=0.5, device='cpu'):
+          concept_criterion=None, latent_criterion=None, loss_norm=None, device='cpu'):
     if not y_criterion:
         y_criterion = nn.BCELoss()
     if not concept_criterion:
         concept_criterion = nn.MSELoss()
+    if not loss_norm:
+        loss_norm = {"method": "weighted_sum", "y_weight": 0.5, "c_weight": 0.5}
     
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
@@ -182,22 +192,34 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         losses = []
 
         # Label Loss
-        losses.append(y_weight * y_criterion(y_out, y))
+        if loss_norm['method'] == "weighted_exp_sum":
+            losses.append(loss_norm['y_weight'] * (y_criterion(y_out, y) - loss_norm['y_utopia'])**loss_norm["exp"])
+        else:
+            losses.append(loss_norm['y_weight'] * y_criterion(y_out, y))
         
         # Concept Loss
         if isinstance(concept_criterion, list):
             for i in range(len(concept_criterion)):
-                if isinstance(concept_weight, list):
-                    c_weight = concept_weight[i]
+                if isinstance(loss_norm["c_weight"], list):
+                    c_weight = loss_norm["c_weight"][i]
                 else:
-                    c_weight = concept_weight
+                    c_weight = loss_norm["c_weight"]
+            if loss_norm['method'] == "weighted_exp_sum":
+                losses.append(c_weight * (concept_criterion[i](c_out[:,i], C[:,i]) - loss_norm['c_utopia'])**loss_norm["exp"])
+            else:
                 losses.append(c_weight * concept_criterion[i](c_out[:,i], C[:,i]))
-        else:
-            losses.append(concept_weight * concept_criterion(c_out[:,:n_concepts], C))
+        elif concept_criterion:
+            if loss_norm['method'] == "weighted_exp_sum":
+                losses.append(loss_norm["c_weight"] * (concept_criterion(c_out[:,:n_concepts], C) - loss_norm['c_utopia'])**loss_norm["exp"])
+            else:
+                losses.append(loss_norm["c_weight"] * concept_criterion(c_out[:,:n_concepts], C))
             
         # Latent Loss
         if latent_criterion:
-            losses.append(latent_weight * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]))
+            if loss_norm['method'] == "weighted_exp_sum":
+                losses.append(loss_norm['l_weight'] * (latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]) - loss_norm['l_utopia'])**loss_norm["exp"])
+            else:
+                losses.append(loss_norm['l_weight'] * latent_criterion(c_out[:,:n_concepts], c_out[:,n_concepts:]))
             
         loss = sum(losses)
 
@@ -220,7 +242,7 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
 
 
     print("Test Results:")
-    print("Loss: {:.4f}, Accuracy: {:.4f}".format(running_loss.avg, running_accuracy.avg))
+    print("Loss: {:.4f}, Label Accuracy: {:.4f}, Concept Accuracy: {:.4f}".format(running_loss.avg, running_accuracy.avg, concept_accuracy.avg))
     print("Label Loss: {:.4f}, Concept Loss: {:.4f} Latent Loss: {:.4f}".format(label_loss.avg, concept_loss.avg, latent_loss.avg))
     print("F1 Score: {:.4f}, Precision: {:.4f}, Recall: {:.4f}, ROCAUC: {:.4f}".format(f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg))
-    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg
+    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg, label_loss.avg, concept_loss.avg, latent_loss.avg, f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg

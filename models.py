@@ -35,9 +35,7 @@ class XtoCModel(nn.Module):
             x = layer(x)
             if layer_num == len(self.linears)-1:
                 if isinstance(self.final_activation, nn.Module):
-                    x[:,:self.concepts] = self.final_activation(x[:,:self.concepts])
-                    if self.latents > 0:
-                        x[:,self.concepts:] = self.activation_func(x[:,self.concepts:])
+                    x = self.final_activation(x)
                 elif self.final_activation:
                     x = self.activation_func(x)
             else:
