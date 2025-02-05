@@ -14,7 +14,7 @@
                 "c_weight": 0,
                 "l_weight": 0
             },
-            "epochs": 100,
+            "epochs": 500,
             "xc_depth": 2,
             "xc_width": 512,
             "xc_use_relu": true,
@@ -30,10 +30,10 @@
             "l_criterion": ""
         },
         "results": {
-            "Loss": 1.4344637393951416,
-            "Label Accuracy": 0.7334193587303162,
-            "Label Loss": 1.4344637393951416,
-            "Concept Accuracy": 0.395612895488739,
+            "Loss": 1.376339316368103,
+            "Label Accuracy": 0.7889031767845154,
+            "Label Loss": 1.376339316368103,
+            "Concept Accuracy": 0.5373870730400085,
             "Concept Loss": 0.0,
             "Latent Loss": 0
         }
@@ -96,7 +96,7 @@
                 "l_utopia": 0,
                 "exp": 2
             },
-            "epochs": 100,
+            "epochs": 500,
             "xc_depth": 2,
             "xc_width": 512,
             "xc_use_relu": true,
@@ -112,11 +112,11 @@
             "l_criterion": ""
         },
         "results": {
-            "Loss": 0.0077413590624928474,
-            "Label Accuracy": 0.6881290078163147,
-            "Label Loss": 0.003037847811356187,
-            "Concept Accuracy": 0.8759031891822815,
-            "Concept Loss": 0.004703511018306017,
+            "Loss": 0.002224828116595745,
+            "Label Accuracy": 0.713161289691925,
+            "Label Loss": 0.0009280626545660198,
+            "Concept Accuracy": 0.9271935224533081,
+            "Concept Loss": 0.0012967654038220644,
             "Latent Loss": 0
         }
     },
@@ -139,7 +139,7 @@
                 "l_utopia": 0,
                 "exp": 2
             },
-            "epochs": 100,
+            "epochs": 500,
             "xc_depth": 2,
             "xc_width": 512,
             "xc_use_relu": true,
@@ -155,11 +155,11 @@
             "l_criterion": ""
         },
         "results": {
-            "Loss": 0.0028160675428807735,
-            "Label Accuracy": 0.6970322132110596,
-            "Label Loss": 0.0016805072082206607,
-            "Concept Accuracy": 0.9471451044082642,
-            "Concept Loss": 0.001135560218244791,
+            "Loss": 6.088770896894857e-05,
+            "Label Accuracy": 0.7325161099433899,
+            "Label Loss": 3.085882781306282e-05,
+            "Concept Accuracy": 0.9832096695899963,
+            "Concept Loss": 3.0028881155885756e-05,
             "Latent Loss": 0
         }
     },
@@ -221,7 +221,7 @@
                 "l_utopia": 6.188335418701172,
                 "exp": 2
             },
-            "epochs": 450,
+            "epochs": 500,
             "xc_depth": 2,
             "xc_width": 512,
             "xc_use_relu": true,
@@ -237,12 +237,155 @@
             "l_criterion": "leakage_loss_simple"
         },
         "results": {
-            "Loss": 0.013031523674726486,
-            "Label Accuracy": 0.6800000071525574,
-            "Label Loss": 0.002563740126788616,
-            "Concept Accuracy": 0.8695160746574402,
-            "Concept Loss": 0.005326320882886648,
-            "Latent Loss": 0.005141462665051222
+            "Loss": 0.009492028504610062,
+            "Label Accuracy": 0.6780645251274109,
+            "Label Loss": 0.002938015852123499,
+            "Concept Accuracy": 0.8934193253517151,
+            "Concept Loss": 0.003277116222307086,
+            "Latent Loss": 0.003276896895840764
+        }
+    },
+    "leakageDelay": {
+        "config": {
+            "data_fn": "data/covertype_16_concepts.pkl",
+            "x_num": 54,
+            "c_num": 8,
+            "y_num": 7,
+            "l_num": 8,
+            "batch_size": 8192,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.895,
+                "c_weight": 0.1,
+                "l_weight": 0.005,
+                "y_utopia": 1.4344637393951416,
+                "c_utopia": 0.052827201783657074,
+                "l_utopia": 6.188335418701172,
+                "exp": 2
+            },
+            "epochs": 500,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "zero_latents",
+                "100": "default"
+            }
+        },
+        "results": {
+            "Loss": 0.007520817220211029,
+            "Label Accuracy": 0.681290328502655,
+            "Label Loss": 0.0028948229737579823,
+            "Concept Accuracy": 0.9061934947967529,
+            "Concept Loss": 0.002405759645625949,
+            "Latent Loss": 0.002220234600827098
+        }
+    },
+    "sequentialCBM": {
+        "config": {
+            "data_fn": "data/covertype_16_concepts.pkl",
+            "x_num": 54,
+            "c_num": 8,
+            "y_num": 7,
+            "l_num": 0,
+            "batch_size": 8192,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.895,
+                "c_weight": 0.1,
+                "l_weight": 0.005,
+                "y_utopia": 1.4344637393951416,
+                "c_utopia": 0.052827201783657074,
+                "l_utopia": 6.188335418701172,
+                "exp": 2
+            },
+            "epochs": 500,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "x_to_c",
+                "50": "c_to_y"
+            },
+            "model_type": "ThreePartModel"
+        },
+        "results": {
+            "Loss": 0.26529374718666077,
+            "Label Accuracy": 0.44322580099105835,
+            "Label Loss": 0.07362404465675354,
+            "Concept Accuracy": 0.9769838452339172,
+            "Concept Loss": 0.0001922342780744657,
+            "Latent Loss": 0.0
+        }
+    },
+    "sequentialLeakage": {
+        "config": {
+            "data_fn": "data/covertype_16_concepts.pkl",
+            "x_num": 54,
+            "c_num": 8,
+            "y_num": 7,
+            "l_num": 8,
+            "batch_size": 8192,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.895,
+                "c_weight": 0.1,
+                "l_weight": 0.005,
+                "y_utopia": 1.4344637393951416,
+                "c_utopia": 0.052827201783657074,
+                "l_utopia": 6.188335418701172,
+                "exp": 2
+            },
+            "epochs": 500,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "x_to_c",
+                "50": "c_to_y"
+            },
+            "model_type": "ThreePartModel"
+        },
+        "results": {
+            "Loss": 0.011637836694717407,
+            "Label Accuracy": 0.7429677248001099,
+            "Label Loss": 5.441946541395737e-06,
+            "Concept Accuracy": 0.9754354357719421,
+            "Concept Loss": 0.00021601771004498005,
+            "Latent Loss": 0.011416377499699593
         }
     }
 }

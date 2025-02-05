@@ -80,12 +80,43 @@ class CtoYModel(nn.Module):
         return x
         
 class FullModel(torch.nn.Module):
-    def __init__(self, x_to_c_model, c_to_y_model):
+    def __init__(self, x_to_c_model, c_to_y_model, device='cpu'):
         super(FullModel, self).__init__()
         self.x_to_c_model = x_to_c_model
         self.c_to_y_model = c_to_y_model
+        self.c_num = self.x_to_c_model.concepts
+        self.l_num = self.x_to_c_model.concepts
+        self.device = device
+        self.ixs = torch.arange(self.c_num+self.l_num, dtype=torch.int64).to(self.device)
     
-    def forward(self, x):
+    def forward(self, x, use_latents=True):
         c_out = self.x_to_c_model(x)
+        if not use_latents:
+            c_out = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), c_out)
         y_out = self.c_to_y_model(c_out)
+        return c_out, y_out
+    
+class ThreePartModel(torch.nn.Module):
+    def __init__(self, x_to_c_model, x_to_l_model, cl_to_y_model, device='cpu'):
+        super(ThreePartModel, self).__init__()
+        self.x_to_c_model = x_to_c_model
+        self.x_to_l_model = x_to_l_model
+        self.cl_to_y_model = cl_to_y_model
+        self.c_num = self.x_to_c_model.concepts
+        self.l_num = self.x_to_c_model.concepts
+        self.device = device
+        self.ixs = torch.arange(self.c_num+self.l_num, dtype=torch.int64).to(self.device)
+
+    def freeze_x_to_c(self, freeze=True):
+        for param in self.x_to_c_model.parameters():
+            param.requires_grad = not freeze
+    
+    def forward(self, x, use_latents=True):
+        c_out = self.x_to_c_model(x)
+        if self.x_to_l_model:
+            l_out = self.x_to_l_model(x)
+            c_out = torch.cat([c_out, l_out], axis=1)
+        if not use_latents:
+            c_out = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), c_out)
+        y_out = self.cl_to_y_model(c_out)
         return c_out, y_out
