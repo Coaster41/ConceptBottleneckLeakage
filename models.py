@@ -89,11 +89,15 @@ class FullModel(torch.nn.Module):
         self.device = device
         self.ixs = torch.arange(self.c_num+self.l_num, dtype=torch.int64).to(self.device)
     
-    def forward(self, x, use_latents=True):
+    def forward(self, x, use_latents=True, hard_cbm=False):
         c_out = self.x_to_c_model(x)
         if not use_latents:
+            if hard_cbm:
+                c_out_hard = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), torch.round(c_out))
             c_out = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), c_out)
-        y_out = self.c_to_y_model(c_out)
+        elif hard_cbm:
+            c_out_hard = torch.where(self.ixs[None, :] >= self.c_num, c_out, torch.round(c_out))
+        y_out = self.c_to_y_model(c_out if not hard_cbm else c_out_hard)
         return c_out, y_out
     
 class ThreePartModel(torch.nn.Module):
@@ -105,18 +109,23 @@ class ThreePartModel(torch.nn.Module):
         self.c_num = self.x_to_c_model.concepts
         self.l_num = self.x_to_c_model.concepts
         self.device = device
-        self.ixs = torch.arange(self.c_num+self.l_num, dtype=torch.int64).to(self.device)
 
     def freeze_x_to_c(self, freeze=True):
         for param in self.x_to_c_model.parameters():
             param.requires_grad = not freeze
     
-    def forward(self, x, use_latents=True):
+    def forward(self, x, use_latents=True, hard_cbm=False):
         c_out = self.x_to_c_model(x)
         if self.x_to_l_model:
-            l_out = self.x_to_l_model(x)
-            c_out = torch.cat([c_out, l_out], axis=1)
-        if not use_latents:
-            c_out = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), c_out)
-        y_out = self.cl_to_y_model(c_out)
+            if use_latents:
+                l_out = self.x_to_l_model(x)
+                if hard_cbm:
+                    c_out_hard = torch.cat([torch.round(c_out), l_out], axis=1)
+                
+                c_out = torch.cat([c_out, l_out], axis=1)
+            else:
+                c_out = torch.cat([c_out, torch.zeros((c_out.shape[0],self.l_num), device=self.device)])
+                if hard_cbm:
+                    c_out_hard = torch.round(c_out)
+        y_out = self.cl_to_y_model(c_out if not hard_cbm else c_out_hard)
         return c_out, y_out

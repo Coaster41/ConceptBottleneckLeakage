@@ -56,7 +56,7 @@ def load_data(X_headers, C_headers, Y_headers, file_name, Cy_norm=True, batch_si
 
 
 def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criterion,
-                    latent_criterion, n_concepts, loss_norm=None, use_latents=True, device='cpu'):
+                    latent_criterion, n_concepts, loss_norm=None, use_latents=True, hard_cbm=False, device='cpu'):
     running_loss = AverageMeter()
     running_accuracy = AverageMeter()
     concept_accuracy = AverageMeter()
@@ -75,7 +75,7 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
         # y = Cy[:, n_concepts:]
 
         optimizer.zero_grad()
-        c_out, y_out = model(X, use_latents)
+        c_out, y_out = model(X, use_latents, hard_cbm)
         losses = []
 
         # print(torch.mean(c_out[:,:n_concepts], dim=0))
@@ -134,7 +134,7 @@ def train_one_epoch(model, train_loader, optimizer, y_criterion, concept_criteri
 
 def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion=None, 
           concept_criterion=None, latent_criterion=None,
-          loss_norm=None, epochs=50, train_method=None, device='cpu'): 
+          loss_norm=None, epochs=50, train_method=None, hard_cbm=False, device='cpu'): 
     if not optimizer:
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     if not y_criterion:
@@ -157,19 +157,19 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
                 cur_method = method
         if cur_method == 'default':
             loss, accuracy, concept_accuracy, label_loss, concept_loss, latent_loss = train_one_epoch(model, train_loader, optimizer, y_criterion, 
-                            concept_criterion, latent_criterion, n_concepts, loss_norm, True, device)
+                            concept_criterion, latent_criterion, n_concepts, loss_norm, True, hard_cbm, device)
         elif cur_method == 'c_to_y': # optimizes latents and labels
             loss, accuracy, concept_accuracy, label_loss, concept_loss, latent_loss = train_one_epoch(model, train_loader, optimizer, y_criterion, 
-                            None, latent_criterion, n_concepts, loss_norm, True, device)
+                            None, latent_criterion, n_concepts, loss_norm, True, hard_cbm, device)
         elif cur_method == 'label_only': # only optimizes label
             loss, accuracy, concept_accuracy, label_loss, concept_loss, latent_loss = train_one_epoch(model, train_loader, optimizer, y_criterion, 
-                            None, None, n_concepts, {"method": "weighted_sum", "y_weight": 1}, True, device)
+                            None, None, n_concepts, {"method": "weighted_sum", "y_weight": 1}, True, hard_cbm, device)
         elif cur_method == 'zero_latents': # optimizes concepts and labels without using latents
             loss, accuracy, concept_accuracy, label_loss, concept_loss, latent_loss = train_one_epoch(model, train_loader, optimizer, y_criterion, 
-                            concept_criterion, None, n_concepts, loss_norm, False, device)
+                            concept_criterion, None, n_concepts, loss_norm, False, hard_cbm, device)
         elif cur_method == 'x_to_c': # Only optimizes concepts
             loss, accuracy, concept_accuracy, label_loss, concept_loss, latent_loss = train_one_epoch(model, train_loader, optimizer, None, 
-                            concept_criterion, None, n_concepts, {"method": "weighted_sum", "c_weight": 1}, True, device)
+                            concept_criterion, None, n_concepts, {"method": "weighted_sum", "c_weight": 1}, True, hard_cbm, device)
         pbar.set_description(f"Total Loss: {loss:.4f} Label Loss: {label_loss:.4f} Label Accuracy: {accuracy:.4f} Concept Loss: {concept_loss:.4f} Concept Accuracy: {concept_accuracy:.4f} Latent Loss: {latent_loss:.4f}")
         losses.append(loss)
         accuracies.append(accuracy)
@@ -179,7 +179,7 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
 
 
 def eval(model, test_loader, n_concepts, y_criterion=None, 
-          concept_criterion=None, latent_criterion=None, loss_norm=None, device='cpu'):
+          concept_criterion=None, latent_criterion=None, loss_norm=None, hard_cbm=False, device='cpu'):
     if not y_criterion:
         y_criterion = nn.BCELoss()
     if not concept_criterion:
@@ -211,7 +211,7 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
         # y = Cy[:, n_concepts:]
 
 
-        c_out, y_out = model(X)
+        c_out, y_out = model(X, hard_cbm=hard_cbm)
         losses = []
 
         # Label Loss
