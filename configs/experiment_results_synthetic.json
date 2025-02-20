@@ -161,7 +161,12 @@
             "Concept Accuracy": 0.8109687501907349,
             "Concept Loss": 0.0016749771550297738,
             "Latent Loss": 0,
-            "Intervention Label Accuracy": [0.4609, 0.463, 0.4645, 0.4658]
+            "Intervention Label Accuracy": [
+                0.4609,
+                0.463,
+                0.4645,
+                0.4658
+            ]
         }
     },
     "latentCBM": {
@@ -206,7 +211,12 @@
             "Concept Accuracy": 0.8296468753814698,
             "Concept Loss": 0.0010981724316254258,
             "Latent Loss": 0,
-            "Intervention Label Accuracy": [0.567, 0.5747, 0.575, 0.5751]
+            "Intervention Label Accuracy": [
+                0.567,
+                0.5747,
+                0.575,
+                0.5751
+            ]
         }
     },
     "leakageLoss": {
@@ -251,7 +261,12 @@
             "Concept Accuracy": 0.8069906253814697,
             "Concept Loss": 0.0025912902660667897,
             "Latent Loss": 0.0013721450852230191,
-            "Intervention Label Accuracy": [0.5093, 0.5204, 0.5243, 0.5253]
+            "Intervention Label Accuracy": [
+                0.5093,
+                0.5204,
+                0.5243,
+                0.5253
+            ]
         }
     },
     "leakageDelay": {
@@ -300,7 +315,12 @@
             "Concept Accuracy": 0.8127562508583069,
             "Concept Loss": 0.0015336589820683002,
             "Latent Loss": 0.001682138566672802,
-            "Intervention Label Accuracy": [0.4896, 0.4965, 0.4991, 0.4998]
+            "Intervention Label Accuracy": [
+                0.4896,
+                0.4965,
+                0.4991,
+                0.4998
+            ]
         }
     },
     "sequentialCBM": {
@@ -316,7 +336,7 @@
                 "method": "weighted_exp_sum",
                 "y_weight": 0.893,
                 "c_weight": 0.1,
-                "l_weight": 0.002,
+                "l_weight": 0,
                 "y_utopia": 1.9541,
                 "c_utopia": 0.0697,
                 "l_utopia": 6.1173,
@@ -344,13 +364,18 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.07498085753917694,
-            "Label Accuracy": 0.5274500000953675,
-            "Label Loss": 6.526789531926625e-05,
-            "Concept Accuracy": 0.8464562496185303,
-            "Concept Loss": 7.286804852774367e-05,
-            "Latent Loss": 0.07484272122383118,
-            "Intervention Label Accuracy": [0.586, 0.5888, 0.5893, 0.5893]
+            "Loss": 0.00016049905307590962,
+            "Label Accuracy": 0.5450000002861023,
+            "Label Loss": 9.579313899739646e-05,
+            "Concept Accuracy": 0.8472906248092651,
+            "Concept Loss": 6.470591381657869e-05,
+            "Latent Loss": 0.0,
+            "Intervention Label Accuracy": [
+                0.5945000003814698,
+                0.5968499995231629,
+                0.5969500002861023,
+                0.5968000002861023
+            ]
         }
     },
     "sequentialLatentCBM": {
@@ -400,7 +425,12 @@
             "Concept Accuracy": 0.8452562499046326,
             "Concept Loss": 7.118526314152405e-05,
             "Latent Loss": 0,
-            "Intervention Label Accuracy": [0.6043, 0.6093, 0.6092, 0.6094]
+            "Intervention Label Accuracy": [
+                0.6043,
+                0.6093,
+                0.6092,
+                0.6094
+            ]
         }
     },
     "sequentialLeakage": {
@@ -450,7 +480,12 @@
             "Concept Accuracy": 0.8446125,
             "Concept Loss": 8.449971467489376e-05,
             "Latent Loss": 0.001039254604652524,
-            "Intervention Label Accuracy": [0.5814, 0.5829, 0.5827, 0.5826]
+            "Intervention Label Accuracy": [
+                0.5814,
+                0.5829,
+                0.5827,
+                0.5826
+            ]
         }
     },
     "hardCBM": {
@@ -495,7 +530,12 @@
             "Concept Accuracy": 0.8349781257629395,
             "Concept Loss": 0.0005822205069474876,
             "Latent Loss": 0,
-            "Intervention Label Accuracy": [0.5606, 0.5607, 0.5607, 0.5607]
+            "Intervention Label Accuracy": [
+                0.5606,
+                0.5607,
+                0.5607,
+                0.5607
+            ]
         }
     },
     "hardLatentCBM": {
@@ -540,7 +580,12 @@
             "Concept Accuracy": 0.8238281258583069,
             "Concept Loss": 0.0008000840908847749,
             "Latent Loss": 0,
-            "Intervention Label Accuracy": [0.5706, 0.5712, 0.5712, 0.5712]
+            "Intervention Label Accuracy": [
+                0.5706,
+                0.5712,
+                0.5712,
+                0.5712
+            ]
         }
     },
     "hardLeakageCBM": {
@@ -585,7 +630,12 @@
             "Concept Accuracy": 0.7915031251907348,
             "Concept Loss": 0.004259183257818222,
             "Latent Loss": 0.0017231249902397395,
-            "Intervention Label Accuracy": [0.542, 0.5429, 0.5429, 0.5429]
+            "Intervention Label Accuracy": [
+                0.542,
+                0.5429,
+                0.5429,
+                0.5429
+            ]
         }
     },
     "hardSequentialLatentCBM": {
@@ -635,7 +685,12 @@
             "Concept Accuracy": 0.8461000005722046,
             "Concept Loss": 7.125393103342503e-05,
             "Latent Loss": 0,
-            "Intervention Label Accuracy": [0.5542, 0.5541, 0.5541, 0.5541]
+            "Intervention Label Accuracy": [
+                0.5542,
+                0.5541,
+                0.5541,
+                0.5541
+            ]
         }
     },
     "hardSequentialLeakage": {
@@ -685,7 +740,12 @@
             "Concept Accuracy": 0.8466375004768372,
             "Concept Loss": 6.122004447388463e-05,
             "Latent Loss": 0.0009902669688686729,
-            "Intervention Label Accuracy": [0.6042, 0.6042, 0.6042, 0.6042]
+            "Intervention Label Accuracy": [
+                0.6042,
+                0.6042,
+                0.6042,
+                0.6042
+            ]
         }
     }
 }
