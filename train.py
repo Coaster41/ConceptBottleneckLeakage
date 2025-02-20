@@ -178,8 +178,22 @@ def train(model, train_loader, n_concepts, optimizer=None, lr=0.001, y_criterion
     return losses, accuracies, concept_accuracies
 
 
-def eval(model, test_loader, n_concepts, y_criterion=None, 
-          concept_criterion=None, latent_criterion=None, loss_norm=None, hard_cbm=False, device='cpu'):
+def eval_interventions(model, c, y, c_out, l_out, hard_cbm=False, intervention_batch=4):
+    c_out = torch.clone(c_out)
+    index_order = torch.argsort(torch.abs(c-c_out), dim=1, descending=True)
+    accuracies = []
+    row_index = torch.arange(c.shape[0])[:,None]
+    for i in range(c.shape[1] // intervention_batch):
+        index = i*intervention_batch
+        c_out[row_index, index_order[:,index:index+intervention_batch]] = c[row_index, index_order[:,index:index+intervention_batch]]
+        y_out = model.forward_concepts(c_out, l_out, hard_cbm=hard_cbm)
+        acc = torch.mean((y == torch.argmax(y_out, dim=1)).float()).item()
+        accuracies.append(acc)
+    return accuracies
+
+
+def eval(model, test_loader, n_concepts, y_criterion=None, concept_criterion=None, 
+         latent_criterion=None, loss_norm=None, hard_cbm=False, intervention_batch=4, device='cpu'):
     if not y_criterion:
         y_criterion = nn.BCELoss()
     if not concept_criterion:
@@ -197,6 +211,9 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
     precision = AverageMeter()
     recall = AverageMeter()
     rocauc = AverageMeter()
+    intevention_acc = []
+    for i in range(n_concepts // intervention_batch):
+        intevention_acc.append(AverageMeter())
     model.eval()
 
     for batch, data in enumerate(test_loader):
@@ -262,10 +279,19 @@ def eval(model, test_loader, n_concepts, y_criterion=None,
             precision.update(precision_score(y_np, y_pred_round), batch_size_prop)
             recall.update(recall_score(y_np, y_pred_round), batch_size_prop)
             rocauc.update(roc_auc_score(y_np, y_pred), batch_size_prop)
+        
+        # Intervention Acc
+        intervention_accuracies = eval_interventions(model, C, y, c_out[:,:n_concepts], c_out[:,n_concepts:], 
+                                                     hard_cbm=hard_cbm, intervention_batch=intervention_batch)
+        for i in range(n_concepts // intervention_batch):
+            intevention_acc[i].update(intervention_accuracies[i], batch_size_prop)
 
 
     print("Test Results:")
     print("Loss: {:.4f}, Label Accuracy: {:.4f}, Concept Accuracy: {:.4f}".format(running_loss.avg, running_accuracy.avg, concept_accuracy.avg))
     print("Label Loss: {:.4f}, Concept Loss: {:.4f} Latent Loss: {:.4f}".format(label_loss.avg, concept_loss.avg, latent_loss.avg))
     print("F1 Score: {:.4f}, Precision: {:.4f}, Recall: {:.4f}, ROCAUC: {:.4f}".format(f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg))
-    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg, label_loss.avg, concept_loss.avg, latent_loss.avg, f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg
+    
+    intervention_accuracy = [int_acc.avg for int_acc in intevention_acc]
+    print(f"Label accuracy with {intervention_batch} interventions: {', '.join(str(round(i, 4)) for i in intervention_accuracy)}")
+    return running_loss.avg, running_accuracy.avg, concept_accuracy.avg, label_loss.avg, concept_loss.avg, latent_loss.avg, f1_score_meter.avg, precision.avg, recall.avg, rocauc.avg, intervention_accuracy

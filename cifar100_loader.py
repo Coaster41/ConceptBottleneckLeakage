@@ -2,7 +2,11 @@ import torch
 import torchvision
 import os
 import torch.nn as nn
-import torchvision.models.mobilenetv3
+# import torchvision.models.mobilenetv3
+from models import FullModel, ThreePartModel, Cifar10CnnModel, CtoYModel
+import time
+import torchvision.transforms as transforms
+import PIL
 
 
 class CIFAR100Concepts(torchvision.datasets.CIFAR100):
@@ -92,67 +96,78 @@ class BinarySigmoid(nn.Module):
         x = torch.nn.functional.sigmoid(x)
         return x + torch.round(x).detach() - x.detach()
 
-class Default_Model(torch.nn.Module):
-    def __init__(self, num_x, num_y, depth=3, width=16, activation_func=nn.ReLU()):
-        super(Default_Model, self).__init__()
-        self.activation = activation_func
-        self.linears = []
-        prev_width = num_x
-        for i in range(depth):
-            if i == depth - 1:
-                self.linears.append(nn.Linear(prev_width, num_y))
-            else:
-                if isinstance(width, list):
-                    self.linears.append(nn.Linear(prev_width, width[i]))
-                    prev_width = width[i]
-                else:
-                    self.linears.append(nn.Linear(prev_width, width))
-                    prev_width = width
-        self.linears = nn.Sequential(*self.linears)
+# class Default_Model(torch.nn.Module):
+#     def __init__(self, num_x, num_y, depth=3, width=16, activation_func=nn.ReLU()):
+#         super(Default_Model, self).__init__()
+#         self.activation = activation_func
+#         self.linears = []
+#         prev_width = num_x
+#         for i in range(depth):
+#             if i == depth - 1:
+#                 self.linears.append(nn.Linear(prev_width, num_y))
+#             else:
+#                 if isinstance(width, list):
+#                     self.linears.append(nn.Linear(prev_width, width[i]))
+#                     prev_width = width[i]
+#                 else:
+#                     self.linears.append(nn.Linear(prev_width, width))
+#                     prev_width = width
+#         self.linears = nn.Sequential(*self.linears)
     
-    def forward(self, x):
-        for layer_num, layer in enumerate(self.linears):
-            x = layer(x)
-            if layer_num < len(self.linears)-1:
-                x = self.activation(x)
-        return x
+#     def forward(self, x):
+#         for layer_num, layer in enumerate(self.linears):
+#             x = layer(x)
+#             if layer_num < len(self.linears)-1:
+#                 x = self.activation(x)
+#         return x
 
 
-class FullModel(torch.nn.Module):
-    def __init__(self, x_to_c_model, c_to_y_model, concept_activation=nn.Sigmoid(), label_activation=nn.Sigmoid()):
-        super(FullModel, self).__init__()
-        self.x_to_c_model = x_to_c_model
-        self.c_to_y_model = c_to_y_model
-        self.concept_activation = concept_activation
-        self.label_activation = label_activation
+# class FullModel2(torch.nn.Module):
+#     def __init__(self, x_to_c_model, c_to_y_model, concept_activation=nn.Sigmoid(), label_activation=nn.Sigmoid()):
+#         super(FullModel2, self).__init__()
+#         self.x_to_c_model = x_to_c_model
+#         self.c_to_y_model = c_to_y_model
+#         self.concept_activation = concept_activation
+#         self.label_activation = label_activation
     
-    def forward(self, x):
-        c_out = self.x_to_c_model(x)
-        if self.concept_activation:
-            c_out = self.concept_activation(c_out)
-        y_out = self.c_to_y_model(c_out)
-        if self.label_activation:
-            y_out = self.label_activation(y_out)
-        return c_out, y_out
+#     def forward(self, x):
+#         c_out = self.x_to_c_model(x)
+#         if self.concept_activation:
+#             c_out = self.concept_activation(c_out)
+#         y_out = self.c_to_y_model(c_out)
+#         if self.label_activation:
+#             y_out = self.label_activation(y_out)
+#         return c_out, y_out
 
-class MobileNetConcepts(torchvision.models.mobilenetv3.MobileNetV3):
-    def forward(self, x):
-        x = self.features(x)
+# class MobileNetConcepts(torchvision.models.mobilenetv3.MobileNetV3):    
+#     def forward(self, x, use_latents=True, hard_cbm=False):
+#         x = self.features(x)
 
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
 
-        c, x = self.classifier(x)
+#         if isinstance(self.classifier, FullModel) or isinstance(self.classifier, ThreePartModel):
+#             c, x = self.classifier(x, use_latents=use_latents, hard_cbm=hard_cbm)
+#         else:
+#             c, x = self.classifier(x)
 
-        return c, x
+#         return c, x
+    
+#     def forward_concepts(self, c, l, hard_cbm=False):
+#         return self.classifier.forward_concepts(c, l, hard_cbm=hard_cbm)
+    
+#     def freeze_x_to_c(self, freeze=True):
+#         return self.classifier.freeze_x_to_c(freeze=freeze)
 
 
 def train_concept_model(model, train_loader, device='cpu'):
     y_criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.NAdam(model.parameters(), lr=0.001)
+    # optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=5e-4)
     loss_meter = AverageMeter()
     acc_meter = AverageMeter()
     epochs = 50
+    model.train()
     for epoch in range(epochs):
         loss_meter.reset()
         acc_meter.reset()
@@ -161,6 +176,7 @@ def train_concept_model(model, train_loader, device='cpu'):
             y = y.squeeze().type(torch.LongTensor).to(device)
             
             c_pred, y_pred = model(x)
+            # y_pred = model(x)
 
             y_loss = y_criterion(y_pred, y)
             loss = y_loss
@@ -176,9 +192,10 @@ def train_concept_model(model, train_loader, device='cpu'):
 
 
 def test_concept_model(model, dataset, device='cpu', update_concepts=False):
+    model.eval()
     dataset.get_index=update_concepts
     data_loader = torch.utils.data.DataLoader(dataset,
-                                            batch_size=1024,
+                                            batch_size=64,
                                             shuffle=False,
                                             num_workers=4)
     y_criterion = nn.CrossEntropyLoss()
@@ -194,6 +211,7 @@ def test_concept_model(model, dataset, device='cpu', update_concepts=False):
             y = y.squeeze().type(torch.LongTensor).to(device)
             
             c_pred, y_pred = model(x)
+            # y_pred = model(x)
 
             y_loss = y_criterion(y_pred, y)
             loss = y_loss
@@ -209,60 +227,80 @@ def test_concept_model(model, dataset, device='cpu', update_concepts=False):
         dataset.save_concepts()
         dataset.get_index=False
 
-def _mobilenet_v3(
-    inverted_residual_setting,
-    last_channel,
-    weights,
-    progress,
-):
+# def _mobilenet_v3(
+#     inverted_residual_setting,
+#     last_channel,
+#     weights,
+#     progress,
+# ):
 
-    model = MobileNetConcepts(inverted_residual_setting, last_channel)
+#     model = MobileNetConcepts(inverted_residual_setting, last_channel)
 
-    if weights is not None:
-        model.load_state_dict(weights.get_state_dict(progress=progress, check_hash=True))
+#     if weights is not None:
+#         model.load_state_dict(weights.get_state_dict(progress=progress, check_hash=True))
 
-    return model
+#     return model
 
-def mobilenet_v3_large():
-    weights = torchvision.models.mobilenetv3.MobileNet_V3_Large_Weights.verify(torchvision.models.mobilenetv3.MobileNet_V3_Large_Weights.IMAGENET1K_V2)
+# def mobilenet_v3_large():
+#     weights = torchvision.models.mobilenetv3.MobileNet_V3_Large_Weights.verify(torchvision.models.mobilenetv3.MobileNet_V3_Large_Weights.IMAGENET1K_V2)
 
-    inverted_residual_setting, last_channel = torchvision.models.mobilenetv3._mobilenet_v3_conf("mobilenet_v3_large")
-    return _mobilenet_v3(inverted_residual_setting, last_channel, weights, True)
+#     inverted_residual_setting, last_channel = torchvision.models.mobilenetv3._mobilenet_v3_conf("mobilenet_v3_large")
+#     return _mobilenet_v3(inverted_residual_setting, last_channel, weights, True)
 
 
 def main():
+    print("load data start")
+    start_time = time.time()
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize((227, 227)),
-        torchvision.transforms.ToTensor(),
-        torchvision.transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010])
-    ])
-    cifar100_train_dataset = CIFAR100Concepts('../data/', train=True, download=False, transform=transform)
-    train_loader = torch.utils.data.DataLoader(cifar100_train_dataset,
-                                            batch_size=1024,
+    train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+    test_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+    # train_transform = transforms.Compose(
+    #     [transforms.RandomHorizontalFlip(p=0.5),
+    #     transforms.RandomAffine(degrees=(-5, 5), translate=(0.1, 0.1), scale=(0.9, 1.1)),
+    #     transforms.ToTensor(),
+    #     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    # test_transform = transforms.Compose(
+    #     [transforms.ToTensor(),
+    #     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    c_num = 2048
+    y_num = 10
+    cifar10_train_dataset = CIFAR10Concepts('../data/', train=True, download=False, transform=train_transform, n_concepts=c_num)
+    train_loader = torch.utils.data.DataLoader(cifar10_train_dataset,
+                                            batch_size=64,
                                             shuffle=True,
                                             num_workers=4)
-    cifar100_test_dataset = CIFAR100Concepts('../data/', train=False, download=False, transform=transform)
-
-    model = mobilenet_v3_large().to(device)
-    x_num = model.classifier[0].in_features
-    c_num = 32
-    y_num = 100
-    x_to_c_model = Default_Model(x_num,c_num, width=1024, depth=1)
-    c_to_y_model = Default_Model(c_num,y_num, width=512, depth=2)
-    classifier = FullModel(x_to_c_model, c_to_y_model, concept_activation=BinarySigmoid(), label_activation=nn.Softmax(dim=1)).to(device)
-    for param in model.parameters():
-        param.requires_grad = False
-    model.classifier = classifier
+    cifar10_test_dataset = CIFAR10Concepts('../data/', train=False, download=False, transform=test_transform, n_concepts=c_num)
+    print("finished loading data", time.time() - start_time)
+    # x_to_c_model = Cifar10CnnModel(c_num, 0, final_activation=nn.ReLU()).to(device)
+    x_to_c_model = torchvision.models.resnet50(pretrained=True)
+    x_to_c_model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    num_features = x_to_c_model.fc.in_features
+    c_num = num_features
+    print('num_features', num_features)
+    x_to_c_model.fc = nn.ReLU()
+    model = x_to_c_model.to(device)
+    c_to_y_model = CtoYModel(c_num, y_num, width=128, depth=0, final_activation=nn.Softmax(dim=1)).to(device)
+    model = FullModel(x_to_c_model, c_to_y_model, device=device, concepts=c_num, latents=0).to(device)
     # print(model)
+    print("start training data", time.time() - start_time)
     train_concept_model(model, train_loader, device)
-    test_concept_model(model, cifar100_test_dataset, device)
+    # model.load_state_dict(torch.load("cifar10_weights.pt", weights_only=True))
+    test_concept_model(model, cifar10_test_dataset, device)
     # save = input("Save model concepts? (y or n) ")
     # if save == 'y':
-    torch.save(model.state_dict(), "cifar100_weights.pt")
-    test_concept_model(model, cifar100_train_dataset, device, update_concepts=True)
-    test_concept_model(model, cifar100_test_dataset, device, update_concepts=True)
+    torch.save(model.state_dict(), "cifar10_weights.pt")
+    test_concept_model(model, cifar10_train_dataset, device, update_concepts=True)
+    test_concept_model(model, cifar10_test_dataset, device, update_concepts=True)
         
 
 if __name__ == "__main__":
+    print("start start")
     main()

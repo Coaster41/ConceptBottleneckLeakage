@@ -80,25 +80,38 @@ class CtoYModel(nn.Module):
         return x
         
 class FullModel(torch.nn.Module):
-    def __init__(self, x_to_c_model, c_to_y_model, device='cpu'):
+    def __init__(self, x_to_c_model, c_to_y_model, device='cpu', concepts=None, latents=None):
         super(FullModel, self).__init__()
         self.x_to_c_model = x_to_c_model
         self.c_to_y_model = c_to_y_model
-        self.c_num = self.x_to_c_model.concepts
-        self.l_num = self.x_to_c_model.concepts
+        if concepts is not None:
+            self.c_num = concepts
+        else:
+            self.c_num = self.x_to_c_model.concepts
+        if latents is not None:
+            self.l_num = latents
+        else:
+            self.l_num = self.x_to_c_model.latents
         self.device = device
         self.ixs = torch.arange(self.c_num+self.l_num, dtype=torch.int64).to(self.device)
     
     def forward(self, x, use_latents=True, hard_cbm=False):
         c_out = self.x_to_c_model(x)
-        if not use_latents:
+        if not use_latents and self.l_num > 0:
             if hard_cbm:
-                c_out_hard = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), torch.round(c_out))
+                c_out_hard = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), c_out + torch.round(c_out).detach() - c_out.detach())
             c_out = torch.where(self.ixs[None, :] >= self.c_num, torch.tensor(0.).to(self.device), c_out)
         elif hard_cbm:
-            c_out_hard = torch.where(self.ixs[None, :] >= self.c_num, c_out, torch.round(c_out))
+            c_out_hard = torch.where(self.ixs[None, :] >= self.c_num, c_out, c_out + torch.round(c_out).detach() - c_out.detach())
         y_out = self.c_to_y_model(c_out if not hard_cbm else c_out_hard)
         return c_out, y_out
+    
+    def forward_concepts(self, c, l, hard_cbm=False):
+        if hard_cbm:
+            c = c + torch.round(c).detach() - c.detach()
+        cl = torch.cat((c, l), dim=1)
+        return self.c_to_y_model(cl)
+
     
 class ThreePartModel(torch.nn.Module):
     def __init__(self, x_to_c_model, x_to_l_model, cl_to_y_model, device='cpu'):
@@ -107,7 +120,7 @@ class ThreePartModel(torch.nn.Module):
         self.x_to_l_model = x_to_l_model
         self.cl_to_y_model = cl_to_y_model
         self.c_num = self.x_to_c_model.concepts
-        self.l_num = self.x_to_c_model.concepts
+        self.l_num = self.x_to_c_model.latents
         self.device = device
 
     def freeze_x_to_c(self, freeze=True):
@@ -117,15 +130,57 @@ class ThreePartModel(torch.nn.Module):
     def forward(self, x, use_latents=True, hard_cbm=False):
         c_out = self.x_to_c_model(x)
         if self.x_to_l_model:
-            if use_latents:
+            if use_latents and self.l_num > 0:
                 l_out = self.x_to_l_model(x)
                 if hard_cbm:
-                    c_out_hard = torch.cat([torch.round(c_out), l_out], axis=1)
+                    c_out_hard = torch.cat([c_out + torch.round(c_out).detach() - c_out.detach(), l_out], axis=1)
                 
                 c_out = torch.cat([c_out, l_out], axis=1)
             else:
                 c_out = torch.cat([c_out, torch.zeros((c_out.shape[0],self.l_num), device=self.device)])
                 if hard_cbm:
-                    c_out_hard = torch.round(c_out)
+                    c_out_hard = c_out + torch.round(c_out).detach() - c_out.detach()
         y_out = self.cl_to_y_model(c_out if not hard_cbm else c_out_hard)
         return c_out, y_out
+
+    def forward_concepts(self, c, l, hard_cbm=False):
+        if hard_cbm:
+            c = c + torch.round(c).detach() - c.detach()
+        cl = torch.cat((c, l), dim=1)
+        return self.cl_to_y_model(cl)
+    
+class Cifar10CnnModel(nn.Module):
+    def __init__(self, concepts, latents, final_activation=None):
+        super(Cifar10CnnModel, self).__init__()
+        if final_activation == None:
+            final_activation = nn.Sigmoid()
+        self.concepts = concepts
+        self.latents = latents
+        self.network = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 64 x 16 x 16
+            nn.Dropout2d(p=0.2),
+
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 128 x 8 x 8
+            nn.Dropout2d(p=0.2),
+
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 256 x 4 x 4
+            nn.Dropout2d(p=0.2),
+
+            nn.Flatten(), 
+            nn.Linear(256*4*4, concepts+latents),
+            final_activation)
+        
+    def forward(self, xb):
+        return self.network(xb)
