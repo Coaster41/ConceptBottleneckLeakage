@@ -36,6 +36,7 @@ class BinarySigmoid(nn.Module):
 
 def run(expr_name, config_file):
     # Loading Experiment Config
+    print(f"Running {expr_name}")
     with open(config_file) as json_file:
         config = json.load(json_file)[expr_name]['config']
     config_map = {}
@@ -71,7 +72,7 @@ def run(expr_name, config_file):
         c_to_y_model = CtoYModel(config["c_num"]+config["l_num"], config["y_num"], depth=config["cy_depth"], width=config["cy_width"],
                                 use_relu=config["cy_use_relu"], use_sigmoid=config["cy_use_sigmoid"], 
                                 final_activation=config_map.get(config["cy_final_activation"])).to(device)
-        model = ThreePartModel(x_to_c_model, x_to_l_model, c_to_y_model, device=device).to(device)
+        model = ThreePartModel(x_to_c_model, x_to_l_model, c_to_y_model, c_num=config["c_num"], l_num=config["l_num"], device=device).to(device)
     else:
         x_to_c_model = XtoCModel(config["x_num"], config["c_num"], config["l_num"], depth=config["xc_depth"], width=config["xc_width"],
                                 use_relu=config["xc_use_relu"], use_sigmoid=config["xc_use_sigmoid"], 
@@ -82,7 +83,7 @@ def run(expr_name, config_file):
         model = FullModel(x_to_c_model, c_to_y_model, device=device).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"])
-    print(model)
+    # print(model)
 
     # Train Model
     losses, accuracies, concept_accuracy = train(model, train_loader, config["c_num"], optimizer, y_criterion=config_map.get(config["y_criterion"]),
@@ -94,7 +95,7 @@ def run(expr_name, config_file):
             concept_criterion=config_map.get(config["c_criterion"]), latent_criterion=config_map.get(config["l_criterion"]), loss_norm=config["loss_norm"], hard_cbm=config["hard_cbm"], device=device)
 
     results = {"Loss": test_loss, "Label Accuracy": test_accuracy, "Label Loss": test_label_loss, "Concept Accuracy": test_concept_accuracy, 
-            "Concept Loss": test_concept_loss, "Latent Loss": test_latent_loss}
+            "Concept Loss": test_concept_loss, "Latent Loss": test_latent_loss, "Intervention Label Accuracy": intervention_acc}
     with open(config_file) as json_file:
         json_dict = json.load(json_file)
 
@@ -105,10 +106,12 @@ def run(expr_name, config_file):
 
 def main():
     
-    config_file = "experiment_results_16_concepts.json"
+    config_file = "configs/experiment_results_synthetic.json"
     with open(config_file) as json_file:
         experiments = list(json.load(json_file).keys())
-    # expr_name = "sequentialLeakage"
+    # experiments = ["conceptsOnly", "leakageOnly", "baseNN"]
+    experiments = ["softCBM", "latentCBM", "leakageLoss", "leakageDelay", "sequentialCBM", "sequentialLatentCBM", "sequentialLeakage", "hardCBM", "hardLatentCBM", "hardLeakageCBM", "hardSequentialLatentCBM", "hardSequentialLeakage"]
+    # experiments = ["baseNN", "conceptsOnly"]
     for expr_name in experiments:
         run(expr_name, config_file)
 

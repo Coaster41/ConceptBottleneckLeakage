@@ -2,3 +2,5 @@ data/*
 __pycache__/*
 checkpoints/*
 student_data_prep.ipynb
+slurm/*
+model_checkpoints/*

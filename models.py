@@ -114,13 +114,19 @@ class FullModel(torch.nn.Module):
 
     
 class ThreePartModel(torch.nn.Module):
-    def __init__(self, x_to_c_model, x_to_l_model, cl_to_y_model, device='cpu'):
+    def __init__(self, x_to_c_model, x_to_l_model, cl_to_y_model, c_num=None, l_num=None, device='cpu'):
         super(ThreePartModel, self).__init__()
         self.x_to_c_model = x_to_c_model
         self.x_to_l_model = x_to_l_model
         self.cl_to_y_model = cl_to_y_model
-        self.c_num = self.x_to_c_model.concepts
-        self.l_num = self.x_to_c_model.latents
+        if c_num is None:
+            self.c_num = self.x_to_c_model.concepts
+        else:
+            self.c_num = c_num
+        if l_num is None:
+            self.l_num = self.x_to_c_model.latents
+        else:
+            self.l_num = l_num
         self.device = device
 
     def freeze_x_to_c(self, freeze=True):
@@ -137,7 +143,7 @@ class ThreePartModel(torch.nn.Module):
                 
                 c_out = torch.cat([c_out, l_out], axis=1)
             else:
-                c_out = torch.cat([c_out, torch.zeros((c_out.shape[0],self.l_num), device=self.device)])
+                c_out = torch.cat([c_out, torch.zeros((c_out.shape[0],self.l_num), device=self.device)], axis=1)
                 if hard_cbm:
                     c_out_hard = c_out + torch.round(c_out).detach() - c_out.detach()
         y_out = self.cl_to_y_model(c_out if not hard_cbm else c_out_hard)

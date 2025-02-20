@@ -26,6 +26,9 @@ def leakage_loss_simple(c_hat, c_tilde):
     c = torch.concatenate((c_hat, c_tilde), axis=1).squeeze() # 64, 256+128
     sigma = torch.cov(c.T)
     # print(sigma)
-    # print(torch.logdet(sigma[-c_tilde.shape[1]:, -c_tilde.shape[1]:]), torch.logdet(sigma))
-    return 0.5 * (torch.logdet(sigma[-c_tilde.shape[1]:, -c_tilde.shape[1]:]) - torch.logdet(sigma))
+    # print(torch.logdet(sigma[-c_tilde.shape[1]:, -c_tilde.shape[1]:]).detach().item(), torch.logdet(sigma[:c_hat.shape[1], :c_hat.shape[1]]).detach().item(), torch.logdet(sigma).detach().item())
+    # print(list(c_tilde[0,:].detach().cpu().numpy()))
+    # if torch.logdet(sigma[-c_tilde.shape[1]:, -c_tilde.shape[1]:]).detach().item() < -300:
+    #     1 / 0
+    return 0.5 * (torch.logdet(sigma[:c_hat.shape[1], :c_hat.shape[1]]) - torch.logdet(sigma))
 
