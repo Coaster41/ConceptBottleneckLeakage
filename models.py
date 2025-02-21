@@ -146,6 +146,8 @@ class ThreePartModel(torch.nn.Module):
                 c_out = torch.cat([c_out, torch.zeros((c_out.shape[0],self.l_num), device=self.device)], axis=1)
                 if hard_cbm:
                     c_out_hard = c_out + torch.round(c_out).detach() - c_out.detach()
+        elif hard_cbm:
+            c_out_hard = c_out + torch.round(c_out).detach() - c_out.detach()
         y_out = self.cl_to_y_model(c_out if not hard_cbm else c_out_hard)
         return c_out, y_out
 

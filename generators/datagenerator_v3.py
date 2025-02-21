@@ -59,6 +59,8 @@ x_to_new_x = nn.Sequential(
 init_weights(x_to_new_x)
 new_x = x_to_new_x(x)
 
+y_argmax = y_argmax.unsqueeze(dim=1)
+
 xyc = torch.concat([x,y_argmax,c], dim=1)
 fn = '../data/synthetic/xyc_v3_easy.pt'
 torch.save(xyc, fn)

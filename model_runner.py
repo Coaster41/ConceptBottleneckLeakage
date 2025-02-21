@@ -106,12 +106,12 @@ def run(expr_name, config_file):
 
 def main():
     
-    config_file = "configs/experiment_results_synthetic.json"
+    config_file = "configs/synthetic_trials/experiment_results_synthetic_5.json"
     with open(config_file) as json_file:
         experiments = list(json.load(json_file).keys())
-    # experiments = ["conceptsOnly", "leakageOnly", "baseNN"]
-    experiments = ["softCBM", "latentCBM", "leakageLoss", "leakageDelay", "sequentialCBM", "sequentialLatentCBM", "sequentialLeakage", "hardCBM", "hardLatentCBM", "hardLeakageCBM", "hardSequentialLatentCBM", "hardSequentialLeakage"]
-    # experiments = ["baseNN", "conceptsOnly"]
+    # experiments = ["baseNN", "conceptsOnly", "leakageOnly"]
+    # experiments = ["softCBM", "latentCBM", "leakageLoss", "leakageDelay", "sequentialCBM", "sequentialLatentCBM", "sequentialLeakage", "hardCBM", "hardLatentCBM", "hardLeakageCBM", "hardSequential", "hardSequentialLatentCBM", "hardSequentialLeakage"]
+    # experiments = ["hardSequentialCBM"]
     for expr_name in experiments:
         run(expr_name, config_file)
 

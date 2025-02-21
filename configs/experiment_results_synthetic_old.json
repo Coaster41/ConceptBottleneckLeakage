@@ -1,7 +1,7 @@
 {
     "conceptsOnly": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -31,23 +31,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.07844335666894912,
-            "Label Accuracy": 0.13085000002384187,
+            "Loss": 0.06970466632843017,
+            "Label Accuracy": 0.08279999995231628,
             "Label Loss": 0.0,
-            "Concept Accuracy": 0.846584375667572,
-            "Concept Loss": 0.07844335666894912,
+            "Concept Accuracy": 0.8527312507629394,
+            "Concept Loss": 0.06970466632843017,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.13254999988079072,
-                0.13324999992847442,
-                0.13314999992847443,
-                0.13314999992847443
+                0.07850000007152558,
+                0.07830000007152557,
+                0.07825000007152558,
+                0.07825000007152558
             ]
         }
     },
     "leakageOnly": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -77,23 +77,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 5.92634814453125,
-            "Label Accuracy": 0.09510000019073486,
+            "Loss": 6.116996405029297,
+            "Label Accuracy": 0.1060999999165535,
             "Label Loss": 0.0,
-            "Concept Accuracy": 0.44604062514305115,
+            "Concept Accuracy": 0.40839062480926513,
             "Concept Loss": 0.0,
-            "Latent Loss": 5.92634814453125,
+            "Latent Loss": 6.116996405029297,
             "Intervention Label Accuracy": [
-                0.09355000003576279,
-                0.11380000009536743,
-                0.12200000019073487,
-                0.12200000019073487
+                0.10245000002384186,
+                0.10595000001192093,
+                0.10875000005960464,
+                0.10860000005960464
             ]
         }
     },
     "baseNN": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -123,23 +123,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 1.730334944152832,
-            "Label Accuracy": 0.7303000005722046,
-            "Label Loss": 1.730334944152832,
-            "Concept Accuracy": 0.46837812490463254,
+            "Loss": 1.951241265487671,
+            "Label Accuracy": 0.5074499998569488,
+            "Label Loss": 1.951241265487671,
+            "Concept Accuracy": 0.4360124999046326,
             "Concept Loss": 0.0,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.20669999985694884,
-                0.12824999998807907,
-                0.155799999833107,
-                0.16580000004768372
+                0.09349999998807908,
+                0.05725000004768371,
+                0.07600000002384186,
+                0.09195000003576279
             ]
         }
     },
     "softCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -151,8 +151,8 @@
                 "y_weight": 0.9,
                 "c_weight": 0.1,
                 "l_weight": 0,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
                 "l_utopia": 0,
                 "exp": 2
             },
@@ -173,23 +173,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.0019513304516673088,
-            "Label Accuracy": 0.7097500003814697,
-            "Label Loss": 0.0007330388430505991,
-            "Concept Accuracy": 0.8116218747138977,
-            "Concept Loss": 0.0012182916248217226,
+            "Loss": 0.0024080568596720696,
+            "Label Accuracy": 0.48029999976158144,
+            "Label Loss": 0.0007330797160277143,
+            "Concept Accuracy": 0.8109687501907349,
+            "Concept Loss": 0.0016749771550297738,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.6824500005722046,
-                0.6920999995231628,
-                0.6948500002861023,
-                0.6953000002861023
+                0.4609,
+                0.463,
+                0.4645,
+                0.4658
             ]
         }
     },
     "latentCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -201,8 +201,8 @@
                 "y_weight": 0.9,
                 "c_weight": 0.1,
                 "l_weight": 0,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
                 "l_utopia": 0,
                 "exp": 2
             },
@@ -223,23 +223,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.0007916316110640764,
-            "Label Accuracy": 0.7467500000953674,
-            "Label Loss": 0.00017339555866783486,
-            "Concept Accuracy": 0.8269406245231629,
-            "Concept Loss": 0.0006182360521517694,
+            "Loss": 0.0013091356119140983,
+            "Label Accuracy": 0.5176999998092652,
+            "Label Loss": 0.0002109631770523265,
+            "Concept Accuracy": 0.8296468753814698,
+            "Concept Loss": 0.0010981724316254258,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.8355499996185303,
-                0.8439500002861023,
-                0.8438500003814697,
-                0.8432500002861023
+                0.567,
+                0.5747,
+                0.575,
+                0.5751
             ]
         }
     },
     "leakageLoss": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -251,9 +251,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 30,
@@ -273,23 +273,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.007212955613434315,
-            "Label Accuracy": 0.6557999996185303,
-            "Label Loss": 0.0053064532562159,
-            "Concept Accuracy": 0.8198062499046326,
-            "Concept Loss": 0.0009495105473324657,
-            "Latent Loss": 0.0009569917280226946,
+            "Loss": 0.004295483342558145,
+            "Label Accuracy": 0.488,
+            "Label Loss": 0.0003320479878777405,
+            "Concept Accuracy": 0.8069906253814697,
+            "Concept Loss": 0.0025912902660667897,
+            "Latent Loss": 0.0013721450852230191,
             "Intervention Label Accuracy": [
-                0.725400000667572,
-                0.7387500002861023,
-                0.7403500002861023,
-                0.7409000003814697
+                0.5093,
+                0.5204,
+                0.5243,
+                0.5253
             ]
         }
     },
     "leakageDelay": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -301,9 +301,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -327,23 +327,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.0034980677381157873,
-            "Label Accuracy": 0.7075999998092651,
-            "Label Loss": 0.0008388476038118824,
-            "Concept Accuracy": 0.8075250002861023,
-            "Concept Loss": 0.0012736212505027652,
-            "Latent Loss": 0.0013855988645926117,
+            "Loss": 0.0037758648216724396,
+            "Label Accuracy": 0.4857499994277954,
+            "Label Loss": 0.0005600672977219801,
+            "Concept Accuracy": 0.8127562508583069,
+            "Concept Loss": 0.0015336589820683002,
+            "Latent Loss": 0.001682138566672802,
             "Intervention Label Accuracy": [
-                0.6919500000953674,
-                0.7039500004768372,
-                0.7061000005722046,
-                0.7063000005722045
+                0.4896,
+                0.4965,
+                0.4991,
+                0.4998
             ]
         }
     },
     "sequentialCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -355,9 +355,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -373,7 +373,7 @@
             "cy_final_activation": "nn.Softmax(dim=1)",
             "y_criterion": "nn.CrossEntropyLoss()",
             "c_criterion": "nn.BCELoss()",
-            "l_criterion": "",
+            "l_criterion": "leakage_loss_simple",
             "train_method": {
                 "0": "x_to_c",
                 "10": "c_to_y"
@@ -382,23 +382,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.006085816664993763,
-            "Label Accuracy": 0.6562500004768371,
-            "Label Loss": 0.006020945028960705,
-            "Concept Accuracy": 0.839109375,
-            "Concept Loss": 6.487162395496853e-05,
+            "Loss": 0.00016049905307590962,
+            "Label Accuracy": 0.5450000002861023,
+            "Label Loss": 9.579313899739646e-05,
+            "Concept Accuracy": 0.8472906248092651,
+            "Concept Loss": 6.470591381657869e-05,
             "Latent Loss": 0.0,
             "Intervention Label Accuracy": [
-                0.7408000008583069,
-                0.7446,
-                0.7444,
-                0.7444
+                0.5945000003814698,
+                0.5968499995231629,
+                0.5969500002861023,
+                0.5968000002861023
             ]
         }
     },
     "sequentialLatentCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -410,9 +410,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -437,23 +437,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.00018329802635125815,
-            "Label Accuracy": 0.7739000000953674,
-            "Label Loss": 0.0001270690395263955,
-            "Concept Accuracy": 0.8393812501907348,
-            "Concept Loss": 5.622898805304431e-05,
+            "Loss": 0.00018501200338359922,
+            "Label Accuracy": 0.5559500000953674,
+            "Label Loss": 0.00011382673894404433,
+            "Concept Accuracy": 0.8452562499046326,
+            "Concept Loss": 7.118526314152405e-05,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.8519000003814697,
-                0.8548999999046326,
-                0.8550499999046326,
-                0.8550499999046326
+                0.6043,
+                0.6093,
+                0.6092,
+                0.6094
             ]
         }
     },
     "sequentialLeakage": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -465,9 +465,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -492,23 +492,23 @@
             "hard_cbm": false
         },
         "results": {
-            "Loss": 0.0008542937210761011,
-            "Label Accuracy": 0.7669500004768371,
-            "Label Loss": 8.779860497816117e-05,
-            "Concept Accuracy": 0.8386281246185303,
-            "Concept Loss": 6.128056468442083e-05,
-            "Latent Loss": 0.0007052145523950457,
+            "Loss": 0.0012684653483331202,
+            "Label Accuracy": 0.5284000003814697,
+            "Label Loss": 0.000144711029069731,
+            "Concept Accuracy": 0.8446125,
+            "Concept Loss": 8.449971467489376e-05,
+            "Latent Loss": 0.001039254604652524,
             "Intervention Label Accuracy": [
-                0.8600499996185302,
-                0.8621000003814697,
-                0.8619500003814697,
-                0.8619000003814697
+                0.5814,
+                0.5829,
+                0.5827,
+                0.5826
             ]
         }
     },
     "hardCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -520,8 +520,8 @@
                 "y_weight": 0.9,
                 "c_weight": 0.1,
                 "l_weight": 0,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
                 "l_utopia": 0,
                 "exp": 2
             },
@@ -542,23 +542,23 @@
             "hard_cbm": true
         },
         "results": {
-            "Loss": 0.004103993052244187,
-            "Label Accuracy": 0.6826500001907349,
-            "Label Loss": 0.002516720586642623,
-            "Concept Accuracy": 0.8030843750953675,
-            "Concept Loss": 0.001587272440455854,
+            "Loss": 0.0006304263193160296,
+            "Label Accuracy": 0.5154500008583068,
+            "Label Loss": 4.8205806817270515e-05,
+            "Concept Accuracy": 0.8349781257629395,
+            "Concept Loss": 0.0005822205069474876,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.7263500007629394,
-                0.7271500007629395,
-                0.7271500007629395,
-                0.7271500007629395
+                0.5606,
+                0.5607,
+                0.5607,
+                0.5607
             ]
         }
     },
     "hardLatentCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -570,8 +570,8 @@
                 "y_weight": 0.9,
                 "c_weight": 0.1,
                 "l_weight": 0,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
                 "l_utopia": 0,
                 "exp": 2
             },
@@ -592,23 +592,23 @@
             "hard_cbm": true
         },
         "results": {
-            "Loss": 0.0010966322654858232,
-            "Label Accuracy": 0.7168999998092651,
-            "Label Loss": 0.0005210532866536596,
-            "Concept Accuracy": 0.8248968751907348,
-            "Concept Loss": 0.0005755789767019451,
+            "Loss": 0.0009735958182252943,
+            "Label Accuracy": 0.5073500004768372,
+            "Label Loss": 0.0001735117193275073,
+            "Concept Accuracy": 0.8238281258583069,
+            "Concept Loss": 0.0008000840908847749,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.817050000667572,
-                0.817100000667572,
-                0.817100000667572,
-                0.817100000667572
+                0.5706,
+                0.5712,
+                0.5712,
+                0.5712
             ]
         }
     },
     "hardLeakageCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -620,9 +620,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -642,78 +642,23 @@
             "hard_cbm": true
         },
         "results": {
-            "Loss": 0.0028351699270308017,
-            "Label Accuracy": 0.7238000008583069,
-            "Label Loss": 0.0003164329774386715,
-            "Concept Accuracy": 0.8151718758583069,
-            "Concept Loss": 0.001392020495608449,
-            "Latent Loss": 0.0011267164301127196,
+            "Loss": 0.006712901759147644,
+            "Label Accuracy": 0.48339999990463256,
+            "Label Loss": 0.0007305935449898243,
+            "Concept Accuracy": 0.7915031251907348,
+            "Concept Loss": 0.004259183257818222,
+            "Latent Loss": 0.0017231249902397395,
             "Intervention Label Accuracy": [
-                0.8310000001907348,
-                0.8313000001907349,
-                0.8313000001907349,
-                0.8313000001907349
-            ]
-        }
-    },
-    "hardSequentialCBM": {
-        "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
-            "x_num": 64,
-            "c_num": 16,
-            "y_num": 10,
-            "l_num": 0,
-            "batch_size": 1024,
-            "lr": 0.001,
-            "loss_norm": {
-                "method": "weighted_exp_sum",
-                "y_weight": 0.893,
-                "c_weight": 0.1,
-                "l_weight": 0,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 0,
-                "exp": 2
-            },
-            "epochs": 20,
-            "xc_depth": 2,
-            "xc_width": 512,
-            "xc_use_relu": true,
-            "xc_use_sigmoid": false,
-            "xc_final_activation": "nn.Sigmoid()",
-            "cy_depth": 2,
-            "cy_width": 512,
-            "cy_use_relu": true,
-            "cy_use_sigmoid": false,
-            "cy_final_activation": "nn.Softmax(dim=1)",
-            "y_criterion": "nn.CrossEntropyLoss()",
-            "c_criterion": "nn.BCELoss()",
-            "l_criterion": "",
-            "train_method": {
-                "0": "x_to_c",
-                "10": "label_only"
-            },
-            "model_type": "ThreePartModel",
-            "hard_cbm": true
-        },
-        "results": {
-            "Loss": 0.0036647327989339827,
-            "Label Accuracy": 0.6705499994277954,
-            "Label Loss": 0.003595931312441826,
-            "Concept Accuracy": 0.8380968755722046,
-            "Concept Loss": 6.880149742355571e-05,
-            "Latent Loss": 0,
-            "Intervention Label Accuracy": [
-                0.7616500008583069,
-                0.7617000008583069,
-                0.7617000008583069,
-                0.7617000008583069
+                0.542,
+                0.5429,
+                0.5429,
+                0.5429
             ]
         }
     },
     "hardSequentialLatentCBM": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -725,9 +670,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -752,23 +697,23 @@
             "hard_cbm": true
         },
         "results": {
-            "Loss": 0.00015670585937332363,
-            "Label Accuracy": 0.769100000667572,
-            "Label Loss": 8.792012552963797e-05,
-            "Concept Accuracy": 0.8379187498092652,
-            "Concept Loss": 6.87857357901521e-05,
+            "Loss": 0.0004934963796287775,
+            "Label Accuracy": 0.5137500001907349,
+            "Label Loss": 0.00042224244941025974,
+            "Concept Accuracy": 0.8461000005722046,
+            "Concept Loss": 7.125393103342503e-05,
             "Latent Loss": 0,
             "Intervention Label Accuracy": [
-                0.849849999332428,
-                0.850249999332428,
-                0.850249999332428,
-                0.850249999332428
+                0.5542,
+                0.5541,
+                0.5541,
+                0.5541
             ]
         }
     },
     "hardSequentialLeakage": {
         "config": {
-            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "data_fn": "../data/synthetic/xyc_easy.pt",
             "x_num": 64,
             "c_num": 16,
             "y_num": 10,
@@ -780,9 +725,9 @@
                 "y_weight": 0.893,
                 "c_weight": 0.1,
                 "l_weight": 0.002,
-                "y_utopia": 1.730334944152832,
-                "c_utopia": 0.07844335666894912,
-                "l_utopia": 5.92634814453125,
+                "y_utopia": 1.9541,
+                "c_utopia": 0.0697,
+                "l_utopia": 6.1173,
                 "exp": 2
             },
             "epochs": 20,
@@ -807,17 +752,17 @@
             "hard_cbm": true
         },
         "results": {
-            "Loss": 0.0019212049402296543,
-            "Label Accuracy": 0.7180500003814697,
-            "Label Loss": 0.0009916770539944992,
-            "Concept Accuracy": 0.8371906258583068,
-            "Concept Loss": 7.553579087252729e-05,
-            "Latent Loss": 0.0008539920974522829,
+            "Loss": 0.0011570569023489953,
+            "Label Accuracy": 0.5303,
+            "Label Loss": 0.00011784923488612549,
+            "Concept Accuracy": 0.8474187508583069,
+            "Concept Loss": 6.770492840441875e-05,
+            "Latent Loss": 0.0009715027257800103,
             "Intervention Label Accuracy": [
-                0.8165500004768371,
-                0.8165000004768371,
-                0.8165000004768371,
-                0.8165000004768371
+                0.581350000667572,
+                0.5814499999046325,
+                0.5814499999046325,
+                0.5814499999046325
             ]
         }
     }
