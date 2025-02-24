@@ -7,6 +7,7 @@ from train import train, eval
 from models import *
 import json
 from loss import leakage_loss, leakage_loss_simple
+from generators.datagenerator_v3 import gen_data
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class SyntheticDataset(torch.utils.data.Dataset):
@@ -99,21 +100,32 @@ def run(expr_name, config_file):
     with open(config_file) as json_file:
         json_dict = json.load(json_file)
 
-    json_dict[expr_name]['results'] = results
+    if not json_dict[expr_name].get('results'):
+        json_results = dict()
+        for key in results.keys():
+            json_results[key] = [results[key]]
+    else:
+        json_results = json_dict[expr_name]['results']
+        for key in results.keys():
+            json_results[key].append(results[key])
+    json_dict[expr_name]['results'] = json_results
     with open(config_file, "w") as file:
         json.dump(json_dict, file, indent=4)
 
 
 def main():
     
-    config_file = "configs/synthetic_trials/experiment_results_synthetic_5.json"
-    with open(config_file) as json_file:
-        experiments = list(json.load(json_file).keys())
-    # experiments = ["baseNN", "conceptsOnly", "leakageOnly"]
-    # experiments = ["softCBM", "latentCBM", "leakageLoss", "leakageDelay", "sequentialCBM", "sequentialLatentCBM", "sequentialLeakage", "hardCBM", "hardLatentCBM", "hardLeakageCBM", "hardSequential", "hardSequentialLatentCBM", "hardSequentialLeakage"]
-    # experiments = ["hardSequentialCBM"]
-    for expr_name in experiments:
-        run(expr_name, config_file)
+    config_file = "configs/experiment_results_synthetic_100.json"
+    for i in range(100):
+        print('trial', i)
+        gen_data()
+        with open(config_file) as json_file:
+            experiments = list(json.load(json_file).keys())
+        # experiments = ["baseNN", "conceptsOnly", "leakageOnly"]
+        # experiments = ["softCBM", "latentCBM", "leakageLoss", "leakageDelay", "sequentialCBM", "sequentialLatentCBM", "sequentialLeakage", "hardCBM", "hardLatentCBM", "hardLeakageCBM", "hardSequential", "hardSequentialLatentCBM", "hardSequentialLeakage"]
+        # experiments = ["hardSequentialCBM"]
+        for expr_name in experiments:
+            run(expr_name, config_file)
 
 if __name__ == "__main__":
     main()
