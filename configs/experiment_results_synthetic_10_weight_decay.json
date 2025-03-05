@@ -1,0 +1,1308 @@
+{
+    "conceptsOnly": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 0,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_sum",
+                "y_weight": 0,
+                "c_weight": 1,
+                "l_weight": 0
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "hard_cbm": false
+        }
+    },
+    "leakageOnly": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_sum",
+                "y_weight": 0,
+                "c_weight": 0,
+                "l_weight": 1
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "hard_cbm": false
+        }
+    },
+    "baseNN": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 0,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_sum",
+                "y_weight": 1,
+                "c_weight": 0,
+                "l_weight": 0
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "",
+            "l_criterion": "",
+            "hard_cbm": false
+        }
+    },
+    "softCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 0,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.9,
+                "c_weight": 0.1,
+                "l_weight": 0,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 0,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "hard_cbm": false
+        }
+    },
+    "latentCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.9,
+                "c_weight": 0.1,
+                "l_weight": 0,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 0,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "hard_cbm": false
+        }
+    },
+    "leakageLoss": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 30,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "hard_cbm": false
+        }
+    },
+    "leakageDelay": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "zero_latents",
+                "10": "default"
+            },
+            "hard_cbm": false
+        }
+    },
+    "sequentialCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 0,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "c_to_y"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": false
+        }
+    },
+    "sequentialLatentCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "c_to_y"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": false
+        }
+    },
+    "sequentialLeakage": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "c_to_y"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": false
+        }
+    },
+    "hardCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 0,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.9,
+                "c_weight": 0.1,
+                "l_weight": 0,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 0,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "hard_cbm": true
+        }
+    },
+    "hardLatentCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.9,
+                "c_weight": 0.1,
+                "l_weight": 0,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 0,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "hard_cbm": true
+        },
+        "results": {
+            "Loss": [
+                0.0009309483575634658,
+                0.001189088390674442,
+                0.0014652613317593932,
+                0.0007064544479362667,
+                0.0007956531189847738,
+                0.000506625889101997,
+                0.0005342235672287643
+            ],
+            "Label Accuracy": [
+                0.7236000001430511,
+                0.7221499681472778,
+                0.7102999687194824,
+                0.7441499829292297,
+                0.7270499765872955,
+                0.7363499999046326,
+                0.7555999755859375
+            ],
+            "Label Loss": [
+                0.0003003357705892995,
+                0.0005602989695034921,
+                0.0008135747339110821,
+                4.4903337766299956e-05,
+                0.00024338361981790513,
+                7.363980330410413e-05,
+                2.895184172757581e-05
+            ],
+            "Concept Accuracy": [
+                0.8275156021118164,
+                0.8253999948501587,
+                0.8231937289237976,
+                0.8267187178134918,
+                0.8321468532085419,
+                0.8289906084537506,
+                0.8306187391281128
+            ],
+            "Concept Loss": [
+                0.000630612630629912,
+                0.0006287894502747804,
+                0.0006516865396406502,
+                0.0006615511083509773,
+                0.0005522695137187839,
+                0.0004329860967118293,
+                0.0005052717169746757
+            ],
+            "Latent Loss": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Intervention Label Accuracy": [
+                [
+                    0.7978499829769135,
+                    0.7979999780654907,
+                    0.7979999780654907,
+                    0.7979999780654907
+                ],
+                [
+                    0.8126499950885773,
+                    0.8131499588489532,
+                    0.8131499588489532,
+                    0.8131499588489532
+                ],
+                [
+                    0.8123499751091003,
+                    0.8125500082969666,
+                    0.8125500082969666,
+                    0.8125500082969666
+                ],
+                [
+                    0.8277499675750732,
+                    0.8278999924659729,
+                    0.8278999924659729,
+                    0.8278999924659729
+                ],
+                [
+                    0.8122999668121338,
+                    0.8124999701976776,
+                    0.8124999701976776,
+                    0.8124999701976776
+                ],
+                [
+                    0.8305499851703644,
+                    0.8306999802589417,
+                    0.8306999802589417,
+                    0.8306999802589417
+                ],
+                [
+                    0.8518499732017517,
+                    0.8523499667644501,
+                    0.8523499667644501,
+                    0.8523499667644501
+                ]
+            ]
+        }
+    },
+    "hardLeakageCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "hard_cbm": true
+        },
+        "results": {
+            "Loss": [
+                0.044386811554431915,
+                0.0027410098118707538,
+                0.005832067457959056,
+                0.005292065208777785,
+                0.0026471707969903946,
+                0.0035362046910449862,
+                0.005322851473465562,
+                0.010321249719709158,
+                0.00619023316539824
+            ],
+            "Label Accuracy": [
+                0.5666499733924866,
+                0.7137500047683716,
+                0.6735000014305115,
+                0.6912999749183655,
+                0.7128499746322632,
+                0.6967499852180481,
+                0.6764499843120575,
+                0.6465499997138977,
+                0.6744000017642975
+            ],
+            "Label Loss": [
+                0.02361113950610161,
+                0.0006082081235945225,
+                0.0030885172309353948,
+                0.0017871674499474466,
+                0.000640463549643755,
+                0.0012926635099574924,
+                0.0030739937210455537,
+                0.0064203874208033085,
+                0.003039131173864007
+            ],
+            "Concept Accuracy": [
+                0.697118729352951,
+                0.8134812414646149,
+                0.8085249662399292,
+                0.7953999638557434,
+                0.8166906237602234,
+                0.8099218308925629,
+                0.8104155957698822,
+                0.7944374680519104,
+                0.8084687292575836
+            ],
+            "Concept Loss": [
+                0.011714184191077948,
+                0.001302223769016564,
+                0.0015756437787786126,
+                0.0023156192619353533,
+                0.0012176825548522174,
+                0.0014240005402825773,
+                0.001381505629979074,
+                0.0024058143608272076,
+                0.0016378502477891743
+            ],
+            "Latent Loss": [
+                0.009061488788574934,
+                0.0008305778901558369,
+                0.0011679065064527094,
+                0.001189278729725629,
+                0.000789024808909744,
+                0.0008195405534934253,
+                0.0008673519769217819,
+                0.0014950479380786419,
+                0.0015132517437450588
+            ],
+            "Intervention Label Accuracy": [
+                [
+                    0.5250000059604645,
+                    0.5278499722480774,
+                    0.5280500054359436,
+                    0.5280500054359436
+                ],
+                [
+                    0.8066000044345856,
+                    0.8075499534606934,
+                    0.8075499534606934,
+                    0.8075499534606934
+                ],
+                [
+                    0.7794499695301056,
+                    0.7801499664783478,
+                    0.7801499664783478,
+                    0.7801499664783478
+                ],
+                [
+                    0.7279499769210815,
+                    0.7284999787807465,
+                    0.7284999787807465,
+                    0.7284999787807465
+                ],
+                [
+                    0.8171999752521515,
+                    0.8178499937057495,
+                    0.8178499937057495,
+                    0.8178499937057495
+                ],
+                [
+                    0.7970499992370605,
+                    0.7979499697685242,
+                    0.7979499697685242,
+                    0.7979499697685242
+                ],
+                [
+                    0.7984499931335449,
+                    0.7994499802589417,
+                    0.7994499802589417,
+                    0.7994499802589417
+                ],
+                [
+                    0.7091499865055084,
+                    0.7097499668598175,
+                    0.7097499668598175,
+                    0.7097499668598175
+                ],
+                [
+                    0.7553999722003937,
+                    0.7556999623775482,
+                    0.7556999623775482,
+                    0.7556999623775482
+                ]
+            ]
+        }
+    },
+    "hardSequentialCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 0,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 0,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "label_only"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": true
+        }
+    },
+    "hardSequentialLatentCBM": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "c_to_y"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": true
+        },
+        "results": {
+            "Loss": [
+                0.00013065640087006614,
+                9.363190838485025e-05,
+                0.0003668135905172676,
+                0.00016274805966531858,
+                8.169006832758896e-05,
+                9.174722072202712e-05,
+                0.00021775785717181861
+            ],
+            "Label Accuracy": [
+                0.767799973487854,
+                0.7720999717712402,
+                0.7352999746799469,
+                0.7635499835014343,
+                0.7664499878883362,
+                0.7636999785900116,
+                0.743149995803833
+            ],
+            "Label Loss": [
+                4.725346479972359e-05,
+                2.351369309394613e-05,
+                0.00029301815084181726,
+                7.00397231412353e-05,
+                4.66659089966015e-05,
+                3.155139711452648e-05,
+                0.0001665315830905456
+            ],
+            "Concept Accuracy": [
+                0.8368749916553497,
+                0.8369562327861786,
+                0.8377812206745148,
+                0.8354437351226807,
+                0.8402405977249146,
+                0.8374405801296234,
+                0.8392093479633331
+            ],
+            "Concept Loss": [
+                8.340293788933195e-05,
+                7.01182143529877e-05,
+                7.379543967545033e-05,
+                9.270834198105149e-05,
+                3.502415711409412e-05,
+                6.019582178851124e-05,
+                5.122627590026241e-05
+            ],
+            "Latent Loss": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Intervention Label Accuracy": [
+                [
+                    0.8370499908924103,
+                    0.8371999859809875,
+                    0.8371999859809875,
+                    0.8371999859809875
+                ],
+                [
+                    0.8498999774456024,
+                    0.8497999608516693,
+                    0.8497999608516693,
+                    0.8497999608516693
+                ],
+                [
+                    0.8149999678134918,
+                    0.8148999810218811,
+                    0.8148999810218811,
+                    0.8148999810218811
+                ],
+                [
+                    0.836499959230423,
+                    0.8366999924182892,
+                    0.8366999924182892,
+                    0.8366999924182892
+                ],
+                [
+                    0.8361999690532684,
+                    0.836249977350235,
+                    0.836249977350235,
+                    0.836249977350235
+                ],
+                [
+                    0.8418499827384949,
+                    0.8419499695301056,
+                    0.8419499695301056,
+                    0.8419499695301056
+                ],
+                [
+                    0.8201499879360199,
+                    0.8201499879360199,
+                    0.8201499879360199,
+                    0.8201499879360199
+                ]
+            ]
+        }
+    },
+    "hardSequentialLeakage": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 20,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "c_to_y"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": true
+        },
+        "results": {
+            "Loss": [
+                0.0017706310609355569,
+                0.0009447475895285606,
+                0.0009942902834154665,
+                0.0018327098805457354,
+                0.001737185346428305,
+                0.0009770661708898842,
+                0.0013036900199949741
+            ],
+            "Label Accuracy": [
+                0.7236000001430511,
+                0.7486499845981598,
+                0.7394999563694,
+                0.7194499969482422,
+                0.7166999876499176,
+                0.7382999658584595,
+                0.7284499704837799
+            ],
+            "Label Loss": [
+                0.0007074833556544036,
+                0.00016954487364273518,
+                0.00026089783932548016,
+                0.0007931871514301747,
+                0.0009341386903543025,
+                0.0003248200155212544,
+                0.0006356964295264333
+            ],
+            "Concept Accuracy": [
+                0.8366093337535858,
+                0.8367312550544739,
+                0.838174968957901,
+                0.8348093628883362,
+                0.8399437367916107,
+                0.8384656310081482,
+                0.8402656018733978
+            ],
+            "Concept Loss": [
+                9.377572132507339e-05,
+                7.214363358798437e-05,
+                7.152620673878118e-05,
+                9.092990512726828e-05,
+                4.8057729145511985e-05,
+                5.689363752026111e-05,
+                5.4340929636964574e-05
+            ],
+            "Latent Loss": [
+                0.0009693719912320375,
+                0.0007030590786598623,
+                0.0006618662155233324,
+                0.0009485927876085043,
+                0.0007549889269284904,
+                0.0005953525542281568,
+                0.0006136526353657246
+            ],
+            "Intervention Label Accuracy": [
+                [
+                    0.7980499863624573,
+                    0.798149973154068,
+                    0.798149973154068,
+                    0.798149973154068
+                ],
+                [
+                    0.8382999897003174,
+                    0.8382999897003174,
+                    0.8382999897003174,
+                    0.8382999897003174
+                ],
+                [
+                    0.8374499976634979,
+                    0.8377499878406525,
+                    0.8377499878406525,
+                    0.8377499878406525
+                ],
+                [
+                    0.7950499653816223,
+                    0.7951499819755554,
+                    0.7951499819755554,
+                    0.7951499819755554
+                ],
+                [
+                    0.7996499836444855,
+                    0.7997499704360962,
+                    0.7997499704360962,
+                    0.7997499704360962
+                ],
+                [
+                    0.8309499621391296,
+                    0.8310499787330627,
+                    0.8310499787330627,
+                    0.8310499787330627
+                ],
+                [
+                    0.8229999840259552,
+                    0.8231999576091766,
+                    0.8231999576091766,
+                    0.8231999576091766
+                ]
+            ]
+        }
+    },
+    "hardDelaySequentialLeakage": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 30,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "label_only_w/o_latents",
+                "20": "c_to_y"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": true
+        },
+        "results": {
+            "Loss": [
+                0.0017287600203417242,
+                0.0013894219882786274,
+                0.007076124660670757,
+                0.0025189025327563286,
+                0.0008376641781069338,
+                0.0007571876922156662,
+                0.004337401362136006
+            ],
+            "Label Accuracy": [
+                0.7138999998569489,
+                0.7145499885082245,
+                0.6509499847888947,
+                0.6990999579429626,
+                0.7273499667644501,
+                0.71875,
+                0.6685999631881714
+            ],
+            "Label Loss": [
+                0.0007302929880097508,
+                0.000620099192019552,
+                0.0062072863802313805,
+                0.0015370799228549004,
+                0.0002086828535539098,
+                0.0002321807260159403,
+                0.0037894397974014282
+            ],
+            "Concept Accuracy": [
+                0.8366968631744385,
+                0.8349843323230743,
+                0.8361656069755554,
+                0.8357531130313873,
+                0.8416812419891357,
+                0.8386999666690826,
+                0.840784341096878
+            ],
+            "Concept Loss": [
+                9.406149183632806e-05,
+                9.11379793251399e-05,
+                7.671787534491159e-05,
+                9.399330156156793e-05,
+                4.0461134631186724e-05,
+                5.738770960306283e-05,
+                4.36781847383827e-05
+            ],
+            "Latent Loss": [
+                0.0009044055186677724,
+                0.0006781847623642534,
+                0.0007921203796286136,
+                0.0008878293156158179,
+                0.0005885202263016254,
+                0.00046761926205363125,
+                0.0005042832344770432
+            ],
+            "Intervention Label Accuracy": [
+                [
+                    0.7895999848842621,
+                    0.7898499667644501,
+                    0.7898499667644501,
+                    0.7898499667644501
+                ],
+                [
+                    0.807699978351593,
+                    0.8077499866485596,
+                    0.8077499866485596,
+                    0.8077499866485596
+                ],
+                [
+                    0.7343499958515167,
+                    0.7343999743461609,
+                    0.7343999743461609,
+                    0.7343999743461609
+                ],
+                [
+                    0.7722499966621399,
+                    0.7723499834537506,
+                    0.7723499834537506,
+                    0.7723499834537506
+                ],
+                [
+                    0.8099999725818634,
+                    0.8100000023841858,
+                    0.8100000023841858,
+                    0.8100000023841858
+                ],
+                [
+                    0.8188499808311462,
+                    0.8189999759197235,
+                    0.8189999759197235,
+                    0.8189999759197235
+                ],
+                [
+                    0.7549000084400177,
+                    0.7550999820232391,
+                    0.7550999820232391,
+                    0.7550999820232391
+                ]
+            ]
+        }
+    },
+    "hardDelaySequentialLatent": {
+        "config": {
+            "data_fn": "../data/synthetic/xyc_v3_easy.pt",
+            "x_num": 64,
+            "c_num": 16,
+            "y_num": 10,
+            "l_num": 8,
+            "batch_size": 1024,
+            "lr": 0.001,
+            "loss_norm": {
+                "method": "weighted_exp_sum",
+                "y_weight": 0.893,
+                "c_weight": 0.1,
+                "l_weight": 0.002,
+                "y_utopia": 1.730334944152832,
+                "c_utopia": 0.07844335666894912,
+                "l_utopia": 5.92634814453125,
+                "exp": 2
+            },
+            "epochs": 30,
+            "xc_depth": 2,
+            "xc_width": 512,
+            "xc_use_relu": true,
+            "xc_use_sigmoid": false,
+            "xc_final_activation": "nn.Sigmoid()",
+            "cy_depth": 2,
+            "cy_width": 512,
+            "cy_use_relu": true,
+            "cy_use_sigmoid": false,
+            "cy_final_activation": "nn.Softmax(dim=1)",
+            "y_criterion": "nn.CrossEntropyLoss()",
+            "c_criterion": "nn.BCELoss()",
+            "l_criterion": "leakage_loss_simple",
+            "train_method": {
+                "0": "x_to_c",
+                "10": "label_only_w/o_latents",
+                "20": "label_only"
+            },
+            "model_type": "ThreePartModel",
+            "hard_cbm": true
+        },
+        "results": {
+            "Loss": [
+                0.0993073359131813,
+                0.11981729418039322,
+                0.09355141967535019,
+                0.09114228934049606,
+                0.11820592358708382,
+                0.10636424645781517,
+                0.12478560581803322
+            ],
+            "Label Accuracy": [
+                0.8043999969959259,
+                0.8096499741077423,
+                0.6812499761581421,
+                0.7288999855518341,
+                0.8075999915599823,
+                0.8122999668121338,
+                0.8039999902248383
+            ],
+            "Label Loss": [
+                0.0039635044522583485,
+                0.004615966696292162,
+                0.0023870468139648438,
+                3.322022621432552e-05,
+                0.004491851897910237,
+                0.005101939896121621,
+                0.004318882944062352
+            ],
+            "Concept Accuracy": [
+                0.8359375,
+                0.8357187211513519,
+                0.8368562161922455,
+                0.8336280882358551,
+                0.8407000005245209,
+                0.8373437225818634,
+                0.8393562138080597
+            ],
+            "Concept Loss": [
+                9.469606447964907e-05,
+                8.452644033241086e-05,
+                7.771058153593913e-05,
+                0.00010163072511204518,
+                4.310781150707044e-05,
+                6.184879930515308e-05,
+                5.213306394580286e-05
+            ],
+            "Latent Loss": [
+                0.09524913504719734,
+                0.11511680111289024,
+                0.09108666330575943,
+                0.09100743755698204,
+                0.113670963793993,
+                0.10120045766234398,
+                0.12041459232568741
+            ],
+            "Intervention Label Accuracy": [
+                [
+                    0.8989499807357788,
+                    0.8989999890327454,
+                    0.8989999890327454,
+                    0.8989999890327454
+                ],
+                [
+                    0.920199990272522,
+                    0.92044997215271,
+                    0.92044997215271,
+                    0.92044997215271
+                ],
+                [
+                    0.7726499736309052,
+                    0.7727999985218048,
+                    0.7727999985218048,
+                    0.7727999985218048
+                ],
+                [
+                    0.811199963092804,
+                    0.8114499747753143,
+                    0.8114499747753143,
+                    0.8114499747753143
+                ],
+                [
+                    0.9153499603271484,
+                    0.915399968624115,
+                    0.915399968624115,
+                    0.915399968624115
+                ],
+                [
+                    0.9398499727249146,
+                    0.9399999976158142,
+                    0.9399999976158142,
+                    0.9399999976158142
+                ],
+                [
+                    0.9170999825000763,
+                    0.9172499775886536,
+                    0.9172499775886536,
+                    0.9172499775886536
+                ]
+            ]
+        }
+    }
+}
