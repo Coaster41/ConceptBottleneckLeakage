@@ -5,3 +5,4 @@ student_data_prep.ipynb
 slurm/*
 model_checkpoints/*
 figures/*
+plots*
